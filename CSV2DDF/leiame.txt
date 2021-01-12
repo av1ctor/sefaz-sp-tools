@@ -32,5 +32,6 @@ Notas:
 	7. Os valores podem conter cifrão (R$) e separador de milhares (.). O separador de decimal deve ser a vírgula (,)
 	8. Ferramenta para recompilar o aplicativo: https://www.autoitscript.com
 
+A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
 
 Copyright 2020 by André Vicentini (avtvicentini)
