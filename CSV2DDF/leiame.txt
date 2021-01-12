@@ -1,7 +1,7 @@
 Descrição: preenche um DDF no AIIM 2003 a partir de um arquivo csv
 
 Uso: 
-	Se nada for passado na linha de comando, será mostrada a janela para escolha das opções.
+	Se nenhum parâmetro for passado na linha de comando, será mostrada a janela para escolha das opções.
 	Linha de comando: inciso alinea "arquivo_de_entrada.csv"
 
 Formato de entrada dos incisos/alíneas suportados (colunas do CSV):
