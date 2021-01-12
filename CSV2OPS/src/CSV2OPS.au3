@@ -9,8 +9,11 @@
 #include <FileConstants.au3>
 #include <EditConstants.au3>
 #include <WindowsConstants.au3>
+#include <GuiStatusBar.au3>
 
-Global $isGUI, $nomeCsv, $csvEdit
+Global $isGUI
+Global $nomeCsv, $csvEdit
+Global $statusBar
 
 main()
 
@@ -21,6 +24,14 @@ func mostrarErro($texto)
 		MsgBox($IDOK, "Erro", $texto)
 	EndIf
 EndFunc
+
+func showStatus($texto)
+	if not $isGUI then
+		ConsoleWrite($texto)
+	else
+		_GUICtrlStatusBar_SetText($statusBar, StringReplace($texto, @TAB, "|"))
+	endif
+endfunc
 
 Func main()
 	$isGUI = false
@@ -37,8 +48,11 @@ Func main()
 		DllCall("kernel32.dll", "bool", "FreeConsole")
 
 		Opt("GUIOnEventMode", 1)
-		Local $window = GUICreate("CSV2OPS", 600, 180, -1, -1, -1, $WS_EX_ACCEPTFILES)
+		Local $window = GUICreate("CSV2OPS", 600, 200, -1, -1, -1, $WS_EX_ACCEPTFILES)
 		GUISetOnEvent($GUI_EVENT_CLOSE, "fecharApp")
+
+		$statusBar = _GUICtrlStatusBar_Create($window)
+		 _GUICtrlStatusBar_SetParts($statusBar)
 
 		GUICtrlCreateGroup("Opções", 10, 10, 580, 110)
 
@@ -147,7 +161,7 @@ Func preencherMes($hWnd, $colunas)
 	Local $mes = getMesFromData(trim($colunas[0]))
 	Local $ano = getAnoFromData(trim($colunas[0]))
 	Local $valor = formatarDecimal(trim($colunas[1]))
-	ConsoleWrite("Mês:" & $mes & @TAB & "Ano:" & $ano & @TAB & "Valor:" & $valor & @CRLF)
+	showStatus("Mês:" & $mes & @TAB & "Ano:" & $ano & @TAB & "Valor:" & $valor & @CRLF)
 
 	local $anoAtual = Number(@YEAR)
 

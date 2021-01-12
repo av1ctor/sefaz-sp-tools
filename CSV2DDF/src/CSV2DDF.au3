@@ -9,8 +9,12 @@
 #include <FileConstants.au3>
 #include <EditConstants.au3>
 #include <WindowsConstants.au3>
+#include <GuiStatusBar.au3>
 
-Global $isGUI, $nomeCsv, $csvEdit, $incisoBox, $alineaBox
+Global $isGUI
+Global $nomeCsv, $csvEdit
+Global $incisoBox, $alineaBox
+Global $statusBar
 
 main()
 
@@ -21,6 +25,14 @@ func mostrarErro($texto)
 		MsgBox($IDOK, "Erro", $texto)
 	EndIf
 EndFunc
+
+func showStatus($texto)
+	if not $isGUI then
+		ConsoleWrite($texto)
+	else
+		_GUICtrlStatusBar_SetText($statusBar, StringReplace($texto, @TAB, "|"))
+	endif
+endfunc
 
 Func main()
 	$isGUI = false
@@ -44,8 +56,11 @@ Func main()
 		DllCall("kernel32.dll", "bool", "FreeConsole")
 
 		Opt("GUIOnEventMode", 1)
-		Local $window = GUICreate("CSV2DDF", 600, 180, -1, -1, -1, $WS_EX_ACCEPTFILES)
+		Local $window = GUICreate("CSV2DDF", 600, 200, -1, -1, -1, $WS_EX_ACCEPTFILES)
 		GUISetOnEvent($GUI_EVENT_CLOSE, "fecharApp")
+		
+		$statusBar = _GUICtrlStatusBar_Create($window)
+		 _GUICtrlStatusBar_SetParts($statusBar)
 
 		GUICtrlCreateGroup("Opções", 10, 10, 580, 110)
 
@@ -226,7 +241,7 @@ Func preencherDDF_Ia($hWnd, $linha)
 	Local $tributo = formatarDecimal(trim($linha[0]))
 	Local $dci = formatarData(trim($linha[1]))
 	Local $davb = formatarData(trim($linha[2]))
-	ConsoleWrite("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; tributo
 	focusAndSend($hWnd, "[CLASS:ThunderRT6TextBox; INSTANCE:13]", $tributo)
@@ -243,7 +258,7 @@ Func preencherDDF_Ib($hWnd, $linha)
 	Local $dci = formatarData(trim($linha[1]))
 	Local $dij = formatarData(trim($linha[2]))
 	Local $davb = formatarData(trim($linha[3]))
-	ConsoleWrite("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; tributo
 	focusAndSend($hWnd, "[CLASS:ThunderRT6TextBox; INSTANCE:13]", $tributo)
@@ -263,7 +278,7 @@ Func preencherDDF_Ic($hWnd, $linha)
 	Local $dci = formatarData(trim($linha[1]))
 	Local $dij = formatarData(trim($linha[2]))
 	Local $davb = formatarData(trim($linha[3]))
-	ConsoleWrite("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; tributo
 	focusAndSend($hWnd, "[CLASS:ThunderRT6TextBox; INSTANCE:13]", $tributo)
@@ -283,7 +298,7 @@ Func preencherDDF_Il($hWnd, $linha)
 	Local $dci = formatarData(trim($linha[1]))
 	Local $dij = formatarData(trim($linha[2]))
 	Local $davb = formatarData(trim($linha[3]))
-	ConsoleWrite("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; tributo
 	focusAndSend($hWnd, "[CLASS:ThunderRT6TextBox; INSTANCE:13]", $tributo)
@@ -305,7 +320,7 @@ Func preencherDDF_IIc($hWnd, $linha)
 	Local $dcm = formatarData(trim($linha[3]))
 	Local $basico = formatarDecimal(trim($linha[4]))
 	Local $davb = formatarData(trim($linha[5]))
-	ConsoleWrite("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("Tributo:" & $tributo & @TAB & "DCI:" & $dci & @TAB & "DIJ:" & $dij & @TAB & "DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; tributo
 	focusAndSend($hWnd, "[CLASS:ThunderRT6TextBox; INSTANCE:13]", $tributo)
@@ -327,7 +342,7 @@ Func preencherDDF_IVa($hWnd, $linha)
 	Local $dcm = formatarData(trim($linha[0]))
 	Local $basico = formatarDecimal(trim($linha[1]))
 	Local $davb = formatarData(trim($linha[2]))
-	ConsoleWrite("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; DCM
 	focusAndSend($hWnd, "[CLASS:MSMaskWndClass; INSTANCE:1]", $dcm)
@@ -343,7 +358,7 @@ Func preencherDDF_Va($hWnd, $linha)
 	Local $dcm = formatarData(trim($linha[0]))
 	Local $basico = formatarDecimal(trim($linha[1]))
 	Local $davb = formatarData(trim($linha[2]))
-	ConsoleWrite("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; DCM
 	focusAndSend($hWnd, "[CLASS:MSMaskWndClass; INSTANCE:1]", $dcm)
@@ -359,7 +374,7 @@ Func preencherDDF_Vc($hWnd, $linha)
 	Local $dcm = formatarData(trim($linha[0]))
 	Local $basico = formatarDecimal(trim($linha[1]))
 	Local $davb = formatarData(trim($linha[2]))
-	ConsoleWrite("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; DCM
 	focusAndSend($hWnd, "[CLASS:MSMaskWndClass; INSTANCE:1]", $dcm)
@@ -375,7 +390,7 @@ Func preencherDDF_Vm($hWnd, $linha)
 	Local $dcm = formatarData(trim($linha[0]))
 	Local $basico = formatarDecimal(trim($linha[1]))
 	Local $davb = formatarData(trim($linha[2]))
-	ConsoleWrite("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
+	showStatus("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
 
 	; DCM
 	focusAndSend($hWnd, "[CLASS:MSMaskWndClass; INSTANCE:1]", $dcm)
@@ -396,7 +411,7 @@ Func preencherDDF_VIIa($hWnd, $linha)
 		Local $dcm = formatarData(trim($linha[0]))
 		Local $basico = formatarDecimal(trim($linha[1]))
 		Local $davb = formatarData(trim($linha[2]))
-		ConsoleWrite("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
+		showStatus("DCM:" & $dcm & @TAB & "Valor:" & $basico & @TAB & "DAVB:" & $davb & @CRLF)
 
 		; DCM
 		focusAndSend($hWnd, "[CLASS:MSMaskWndClass; INSTANCE:1]", $dcm)
