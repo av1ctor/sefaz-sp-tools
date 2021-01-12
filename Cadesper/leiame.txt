@@ -1,0 +1,17 @@
+Descrição: macro Excel para fazer download de múltiplos cadastros de estabelecimentos no CADESP para impressão
+
+Uso: 
+	1. Abra a macro no Excel 2010 ou superior
+	2. Clique em "Habilitar conteúdo" no Aviso de Segurança
+	3. Preencha a coluna A (IE) com as IE's dos estabelecimentos
+	4. Pressione o botão "Processar..."
+	5. Faça logon no Cadesp como Fazendário
+	6. Aguarde o fim do processamento ou clique novamente no botão "Processar..." para interromper
+
+Notas:
+	1. Não abra ou feche outra janela do Excel enquanto a extração não terminar
+	2. Baseado no bot "GIA Frente Printer v1.0.0" by JP
+
+A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
+
+Copyright 2020 by André Vicentini (avtvicentini)
