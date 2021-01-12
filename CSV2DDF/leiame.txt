@@ -1,0 +1,36 @@
+Descrição: preenche um DDF no AIIM 2003 a partir de um arquivo csv
+
+Uso: 
+	Se nada for passado na linha de comando, será mostrada a janela para escolha das opções.
+	Linha de comando: inciso alinea "arquivo_de_entrada.csv"
+
+Formato de entrada dos incisos/alíneas suportados (colunas do CSV):
+	I: 
+		a: tributo;dci;davb
+		b: tributo;dci;dij;davb
+		c: tributo;dci;dij;davb
+		l: tributo;dci;dij;davb
+	II: 
+		c: tributo;dci;dij;dcm;basico;davb
+	IV: 
+		a: dcm;basico;davb
+	V: 
+		a: dcm;basico;davb
+		c: dcm;basico;davb
+		m: dcm;basico;davb
+	VII: 
+		a: <branco>|dcm;basico;davb
+
+Notas: 
+	1. O AIIM 2003 pode travar durante o preenchimento se o houver algum caracter inválido no arquivo de entrada, então salve primeiro os relatos
+	2. O AIIM 2003 deve estar com a tela do DDF a ser preenchido aberta
+	3. Aguarde a finalização para utilizar o mouse ou o teclado. O foco do mouse/teclado deve permanecer no AIIM 2003 até todo o término da operação
+	4. Se necessitar parar o processamento, pressione Ctrl+C na janela em que o CSV2DDF para fechar o programa
+	5. O arquivo de entrada deve conter um registro por linha, colunas separadas por ponto-e-vírgula (;), sem cabeçalho, 
+	   sem aspas ou aspas-duplas para os valores. Espaços antes e depois dos valores são removidos automaticamente
+	6. As datas devem ser no formato: YYYY-MM, DD/MM/YYYY ou DD/MM/YY. Data no formato YYYY-MM será convertida para ultimo_dia_do_mes/MM/YY
+	7. Os valores podem conter cifrão (R$) e separador de milhares (.). O separador de decimal deve ser a vírgula (,)
+	8. Ferramenta para recompilar o aplicativo: https://www.autoitscript.com
+
+
+Copyright 2020 by André Vicentini (avtvicentini)
