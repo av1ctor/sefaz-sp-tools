@@ -10,11 +10,13 @@
 #include <EditConstants.au3>
 #include <WindowsConstants.au3>
 #include <GuiStatusBar.au3>
+#include <GuiListView.au3>
 
 Global $isGUI
 Global $nomeCsv, $csvEdit
 Global $incisoBox, $alineaBox
 Global $statusBar
+Global $dadosList
 
 main()
 
@@ -56,7 +58,7 @@ Func main()
 		DllCall("kernel32.dll", "bool", "FreeConsole")
 
 		Opt("GUIOnEventMode", 1)
-		Local $window = GUICreate("CSV2DDF", 600, 200, -1, -1, -1, $WS_EX_ACCEPTFILES)
+		Local $window = GUICreate("CSV2DDF", 600, 520, -1, -1, -1, $WS_EX_ACCEPTFILES)
 		GUISetOnEvent($GUI_EVENT_CLOSE, "fecharApp")
 		
 		$statusBar = _GUICtrlStatusBar_Create($window)
@@ -80,11 +82,17 @@ Func main()
 		GUICtrlSetOnEvent($selCsvButton, "selecionarCSV")
 
 		GUICtrlCreateGroup("", -99, -99, 1, 1)
+		
+		GUICtrlCreateGroup("Dados", 10, 130, 580, 310)
 
-		Local $procButton = GUICtrlCreateButton("Processar...", 140, 140, 140, 22)
+		$dadosList = GUICtrlCreateListView("A        |B        |C        |D        |E        |F        |G        |H        |I        ", 20, 150, 560, 280, -1, $LVS_EX_GRIDLINES)
+		
+		GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+		Local $procButton = GUICtrlCreateButton("Processar...", 140, 460, 140, 22)
 		GUICtrlSetOnEvent($procButton, "processar")
 
-		Local $cancButton = GUICtrlCreateButton("Sair", 300, 140, 140, 22)
+		Local $cancButton = GUICtrlCreateButton("Sair", 300, 460, 140, 22)
 		GUICtrlSetOnEvent($cancButton, "fecharApp")
 
 		GUISetState(@SW_SHOW, $window)
@@ -112,6 +120,15 @@ func processar()
 	preencher($inciso, $alinea, $linhas)
 EndFunc
 
+Func criarGrid($linhas)
+	_GUICtrlListView_DeleteAllItems($dadosList)
+	For $i = 0 to UBound($linhas) - 1
+		Local $linha = $linhas[$i]
+		Local $colunas = _ArrayToString($linha, "|")
+		GUICtrlCreateListViewItem($colunas, $dadosList)
+	next
+endfunc
+
 Func selecionarCSV()
 	 $nomeCsv = FileOpenDialog("Selecione o arquivo CSV", @WorkingDir, "Arquivos CSV (*.csv)", $FD_FILEMUSTEXIST)
 	 If @error Then
@@ -120,6 +137,11 @@ Func selecionarCSV()
 	EndIf
 
 	GUICtrlSetData($csvEdit, $nomeCsv)
+	
+	Local $linhas = lerCSV($nomeCsv)
+	if $linhas <> Null then
+		criarGrid($linhas)
+	endif
 EndFunc
 
 Func lerCSV($nome)
