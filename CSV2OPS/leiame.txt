@@ -1,0 +1,23 @@
+Descrição: preenche a tabela Valor Total de Operações no AIIM 2003 a partir de um arquivo csv
+
+Uso: 
+	Se nada for passado na linha de comando, será mostrada a janela para escolha das opções.
+	Linha de comando: arquivo_de_entrada.csv
+
+Formato de entrada (colunas do CSV):
+	data;valor
+
+Notas: 
+	1. O AIIM 2003 pode travar durante o preenchimento se o houver algum caracter inválido no arquivo de entrada, então salve primeiro os relatos
+	2. O AIIM 2003 deve estar com a tela do Valor Total de Operações aberta
+	3. Aguarde a finalização para utilizar o mouse ou o teclado. O foco do mouse/teclado deve permanecer no AIIM 2003 até todo o término da operação
+	4. Se necessitar parar o processamento, pressione Ctrl+C na janela em que o CSV2DDF para fechar o programa
+	5. O arquivo de entrada deve conter um registro por linha, sem linhas em branco, colunas separadas por ponto-e-vírgula (;), sem cabeçalho, 
+	   sem aspas ou aspas-duplas para os valores. Espaços antes e depois dos valores são removidos automaticamente
+	6. As datas devem ser no formato: YYYY-MM
+	7. Os valores podem conter cifrão (R$) e separador de milhares (.). O separador de decimal deve ser a vírgula (,)
+	8. Ferramenta para recompilar o aplicativo: https://www.autoitscript.com
+
+A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
+
+Copyright 2020 by André Vicentini (avtvicentini)
