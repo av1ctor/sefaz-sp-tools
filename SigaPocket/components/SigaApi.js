@@ -1,7 +1,7 @@
 
 const ROOT_PATH = 'https://www.documentos.spsempapel.sp.gov.br';
 const BASE_PATH = ROOT_PATH + '/sigaex/app/';
-const LOGIN_URL = ROOT_PATH + '/siga/public/app/login?cont=https%3A%2F%2Fwww.documentos.spsempapel.sp.gov.br%2Fsiga%2Fapp%2Fprincipal';
+const LOGIN_URL = ROOT_PATH + '/siga/public/app/login';
 
 export default class SigaApi 
 {
@@ -18,7 +18,7 @@ export default class SigaApi
 		}
 		else if(res.status === 200)
 		{
-			if(res.data !== null && res.data.indexOf('SP Sem Papel - Mesa Virtual') === -1)
+			if(res.data !== null && res.data.indexOf('"app/principal"') === -1)
 			{
 				return {errors: ['Usuário e/ou senha inválidos'], data: null}
 			}

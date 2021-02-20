@@ -27,9 +27,11 @@ export default class App extends Component
 	{
 		super(props);
 
+		const vars = JSON.parse((process.env['REACT_VARS'] || '').replace(/'/g, '"') || '{}');
+
 		this.state = {
-			username: '',
-			password: ''
+			username: vars.username || '',
+			password: vars.password || ''
 		};
 
 		this.api = new SigaApi();
