@@ -28,8 +28,8 @@ export default class App extends Component
 		super(props);
 
 		this.state = {
-			username: 'SFP29784',
-			password: 'Spsempapel00'
+			username: '',
+			password: ''
 		};
 
 		this.api = new SigaApi();
