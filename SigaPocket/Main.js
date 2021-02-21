@@ -3,39 +3,21 @@
  * @flow strict-local
  */
 
-import React, {Component} from 'react';
-import {Image, SafeAreaView, StyleSheet, ScrollView, View, StatusBar} from 'react-native';
-import {Button, Text, TextInput} from 'react-native-paper';
+import React, {PureComponent} from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 import SigaApi from './components/SigaApi';
+import Logon from './Logon';
+import Docs from './Docs';
 
-export default class App extends Component
+const Stack = createStackNavigator();
+
+export default class Main extends PureComponent
 {
 	constructor(props)
 	{
 		super(props);
 
-		const vars = JSON.parse((process.env['REACT_VARS'] || '').replace(/'/g, '"') || '{}');
-
-		this.state = {
-			username: vars.username || '',
-			password: vars.password || ''
-		};
-
 		this.api = new SigaApi();
-	}
-
-	setUsername = (text) =>
-	{
-		this.setState({
-			username: text
-		});
-	}
-
-	setPassword = (text) =>
-	{
-		this.setState({
-			password: text
-		});
 	}
 
 	showMessage(msg, kind)
@@ -43,121 +25,37 @@ export default class App extends Component
 		alert(msg);
 	}
 
-	validateForm()
-	{
-		const {username, password} = this.state;
-		if(!username)
-		{
-			this.showMessage('CPF ou matrícula obrigatório', 'error');
-			return false;
-		}
-		
-		if(!password)
-		{
-			this.showMessage('Senha obrigatória', 'error');
-			return false;
-		}
-
-		return true;
-	}
-
-
-	doLogon = async () =>
-	{
-		if(!this.validateForm())
-		{
-			return;
-		}
-		
-		const {username, password} = this.state;
-		
-		const res = await this.api.logon(username, password);
-		if(res.errors !== null)
-		{
-			this.showMessage(res.errors, 'error');
-			return;
-		}
-
-		this.showMessage('Sucesso!', 'success');
-
-		const docs = await this.api.loadDocs();
-		console.log(docs);
-	}
-
 	render()
 	{
 		return (
 			<>
-				<StatusBar barStyle="dark-content" />
-				<SafeAreaView>
-					<ScrollView
-						contentInsetAdjustmentBehavior="automatic"
-						style={styles.scrollView}>
-						<View style={styles.body}>
-							<View style={styles.sectionContainer}>
-								<View style={styles.view}>
-									<Image 
-										style={styles.logo}
-										source={require('./assets/logo-sem-papel-cor.png')}
-									/>
-								</View>
-
-								<View style={styles.view}>
-									<TextInput
-										label="Usuário"
-										placeholder="Digite seu CPF ou matrícula"
-										onChangeText={this.setUsername}
-										value={this.state.username}
-									/>
-								</View>
-
-								<View style={styles.view}>
-									<TextInput
-										secureTextEntry
-										label="Senha"
-										placeholder="Senha"
-										onChangeText={this.setPassword}
-										value={this.state.password}
-									/>
-								</View>
-
-								<View style={styles.view}>
-									<Button
-										mode="contained"
-										icon="login"
-										onPress={this.doLogon}
-									>
-										<Text style={{color: '#fff'}}>Entrar</Text>
-									</Button>
-								</View>
-							</View>
-
-						</View>
-					</ScrollView>
-				</SafeAreaView>
+				<Stack.Navigator initialRouteName="Logon">
+					<Stack.Screen
+        				name="Logon"
+        				options={{ headerTitle: 'Logon' }}
+      				>
+						{props => 
+							<Logon 
+								{...props} 
+								api={this.api} 
+								showMessage={this.showMessage} 
+							/>
+						}
+					</Stack.Screen>
+      				<Stack.Screen
+        				name="Docs"
+        				options={{ headerTitle: 'Documentos' }}
+      				>
+						{props => 
+							<Docs 
+								{...props} 
+								api={this.api} 
+								showMessage={this.showMessage} 
+							/>
+						}
+					</Stack.Screen>
+				</Stack.Navigator>
 			</>
 		);
 	}
 };
-
-const styles = StyleSheet.create({
-	scrollView: {
-		backgroundColor: '#ccc',
-	},
-	body: {
-		backgroundColor: '#fff',
-	},
-	sectionContainer: {
-		marginTop: 32,
-		paddingHorizontal: 24,
-	},
-	logo: {
-		width: 120,
-		height: 55,
-		resizeMode: 'center',
-		alignSelf: 'center'
-	},
-	view: {
-		paddingTop: 4,
-	},
-});

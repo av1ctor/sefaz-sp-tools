@@ -31,7 +31,7 @@ export default class SigaApi
 		return res;
 	}
 
-	loadDocs()
+	async loadGroups()
 	{
 		const data = new FormData();
 		data.append('exibeLotacao', true);
@@ -41,8 +41,14 @@ export default class SigaApi
 		data.append('trazerCancelados', false);
 		data.append('ordemCrescenteData', true);
 		data.append('idVisualizacao', 0);
+
+		const res = await this.post('mesa2.json', data);
+		if(res.errors !== null)
+		{
+			return res;
+		}
 		
-		return this.post('mesa2.json', data);
+		return res.data;
 	}
 
 	async requestURL(
