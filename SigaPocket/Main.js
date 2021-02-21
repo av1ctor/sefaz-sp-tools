@@ -4,22 +4,9 @@
  */
 
 import React, {Component} from 'react';
-import {Button, SafeAreaView, StyleSheet, ScrollView, View, Text, TextInput, StatusBar} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, ScrollView, View, StatusBar} from 'react-native';
+import {Button, Text, TextInput} from 'react-native-paper';
 import SigaApi from './components/SigaApi';
-
-const InputWithLabel = ({label, children}) =>
-{
-	return (
-		<>
-			<View style={styles.inputContainer}>
-				<View>
-					<Text style={styles.inputLabel}>{label}</Text>
-					{children}
-				</View>
-			</View>
-		</>
-	);
-}
 
 export default class App extends Component
 {
@@ -108,32 +95,40 @@ export default class App extends Component
 						style={styles.scrollView}>
 						<View style={styles.body}>
 							<View style={styles.sectionContainer}>
-								<Text style={styles.sectionTitle}>Logon</Text>
+								<View style={styles.view}>
+									<Image 
+										style={styles.logo}
+										source={require('./assets/logo-sem-papel-cor.png')}
+									/>
+								</View>
 
-								<InputWithLabel label="Usuário">
+								<View style={styles.view}>
 									<TextInput
-										style={styles.input}
+										label="Usuário"
 										placeholder="Digite seu CPF ou matrícula"
 										onChangeText={this.setUsername}
 										value={this.state.username}
 									/>
-								</InputWithLabel>
+								</View>
 
-								<InputWithLabel label="Senha">
+								<View style={styles.view}>
 									<TextInput
-										style={styles.input}
+										secureTextEntry
+										label="Senha"
 										placeholder="Senha"
 										onChangeText={this.setPassword}
 										value={this.state.password}
 									/>
-								</InputWithLabel>
+								</View>
 
-								<View style={styles.buttonContainer}>
+								<View style={styles.view}>
 									<Button
-										style={styles.button}
-										title="Entrar"
+										mode="contained"
+										icon="login"
 										onPress={this.doLogon}
-									/>
+									>
+										<Text style={{color: '#fff'}}>Entrar</Text>
+									</Button>
 								</View>
 							</View>
 
@@ -156,34 +151,13 @@ const styles = StyleSheet.create({
 		marginTop: 32,
 		paddingHorizontal: 24,
 	},
-	sectionTitle: {
-		fontSize: 24,
-		fontWeight: '600',
-		color: '#000',
+	logo: {
+		width: 120,
+		height: 55,
+		resizeMode: 'center',
+		alignSelf: 'center'
 	},
-	input: {
-		borderColor: '#aaa',
-		borderWidth: 1,
-		borderRadius: 8,
-	},
-	inputContainer: {
-		paddingTop: 8
-	},
-	inputLabel: {
-		fontSize: 14,
-		fontWeight: '700',
-	},
-	buttonContainer: {
-		paddingTop: 16,
-	},
-	button: {
-	},
-	footer: {
-		color: '#555',
-		fontSize: 12,
-		fontWeight: '600',
-		padding: 4,
-		paddingRight: 12,
-		textAlign: 'right',
+	view: {
+		paddingTop: 4,
 	},
 });
