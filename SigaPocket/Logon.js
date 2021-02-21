@@ -83,7 +83,7 @@ export default class Logon extends PureComponent
 			return;
 		}
 
-		this.props.navigation.navigate('Docs');
+		this.props.navigation.navigate('Groups');
 	}
 
 	render()

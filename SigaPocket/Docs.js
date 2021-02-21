@@ -9,29 +9,20 @@ export default class Docs extends PureComponent
     static propTypes = {
         api: PropTypes.object.isRequired,
         showMessage: PropTypes.func.isRequired,
+        navigation: PropTypes.object.isRequired,
+        route: PropTypes.object,
     };
 
     constructor(props)
     {
         super(props);
-
-        this.state = {
-            groups: []
-        };
-    }
-
-    async componentDidMount()
-    {
-        const groups = await this.props.api.loadGroups();
-        this.setState({
-            groups: groups
-        });
     }
 
     renderDoc(doc)
     {
         return (
             <List.Item
+                key={doc.codigo}
                 title={doc.sigla}
                 description={doc.descr}
                 left={props => <List.Icon {...props} icon="folder" />}
@@ -39,28 +30,14 @@ export default class Docs extends PureComponent
         );
     }
 
-    renderGroup(group)
-    {
-        const docs = group.grupoDocs || [];
-        return (
-            <List.Accordion 
-                title={group.grupoNome + ` (${docs.length})`} 
-                id={group.grupo}>
-                {docs.map(doc => this.renderDoc(doc))}
-            </List.Accordion>
-        );
-    }
-
     render()
     {
-        const {groups} = this.state;
+        const {group} = this.props.route.params;
 
         return(
             <SafeAreaView style={styles.safeAreaView}>
                 <ScrollView style={styles.scrollView}>
-                    <List.AccordionGroup>
-                        {groups.map(group => this.renderGroup(group))}
-                    </List.AccordionGroup>
+                    {group.grupoDocs.map(doc => this.renderDoc(doc))}
                 </ScrollView>              
             </SafeAreaView>
         );
