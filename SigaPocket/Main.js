@@ -10,6 +10,7 @@ import Logon from './Logon';
 import Groups from './Groups';
 import Docs from './Docs';
 import Doc from './Doc';
+import PdfView from './PdfView';
 
 const Stack = createStackNavigator();
 
@@ -74,6 +75,18 @@ export default class Main extends PureComponent
       				>
 						{props => 
 							<Doc 
+								{...props} 
+								api={this.api} 
+								showMessage={this.showMessage} 
+							/>
+						}
+					</Stack.Screen>
+					<Stack.Screen
+        				name="PdfView"
+        				options={{ headerTitle: 'PDF' }}
+      				>
+						{props => 
+							<PdfView 
 								{...props} 
 								api={this.api} 
 								showMessage={this.showMessage} 

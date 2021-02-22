@@ -78,6 +78,55 @@ export default class SigaApi
 		return res.data;
 	}
 
+	async loadPdf(nome, semMarcas, onProgress)
+	{
+		const extractText = (from, pattern) =>
+		{
+			const matches = from.match(pattern);
+			return matches? 
+				matches[1]: 
+				'';
+		}
+		
+		// dar início a geração do PDF
+		const res = await this.get(
+			`arquivo/exibir?idVisualizacao=0&arquivo=${nome}.pdf&completo=1&semmarcas=${semMarcas? 1: 0}`, 
+			{isJsonResponse: false})
+		if(res.errors !== null)
+		{
+			return null;
+		}
+
+		// encontrar URL e id do PDF
+		const url = extractText(res.data, /window\.location = "(.*?)"/);
+
+		const id = extractText(res.data, /this\.start\('[a-zA-Z0-9\-_\.]+', '(.*?)'/);
+
+		// aguardar geração do PDF terminar
+		while(true)
+		{
+			const res = await this.requestURL(
+				'GET', 
+				ROOT_PATH + `/sigaex/api/v1/status/${id}`,
+				null,
+				{isJsonResponse: true});
+
+			if(res.errors !== null)
+			{
+				return null;
+			}
+			
+			if(res.data.indice === res.data.contador)
+			{
+				break;
+			}
+
+			onProgress && onProgress(res.data.indice / res.data.contador)
+		}
+
+		return ROOT_PATH + url;
+	}
+
 	async requestURL(
 		method, 
 		url, 
@@ -88,10 +137,10 @@ export default class SigaApi
 			abortController = null
 		})
 	{
+		console.log(`${method}:${isJsonRequest}:${isJsonResponse}:${url}:${data}`);
 		try
 		{
 			const options = {
-				cache: 'no-store',
 				credentials: 'include',
 				method: method,
 				signal: abortController && abortController.signal
@@ -99,37 +148,57 @@ export default class SigaApi
 
 			if(data !== null)
 			{
-				options.body = !isJsonRequest? data: JSON.stringify(data);
+				options.body = !isJsonRequest? 
+					data: 
+					JSON.stringify(data);
 			}
 
 			let errors = null;
-			const response = await fetch(url, options)
+			const res = await fetch(url, options)
 				.catch((e) => errors = e);
 
-			if(errors === null && response && response.ok)
+			if(errors === null && res && res.ok)
 			{
 				try
 				{
-					const body = isJsonResponse? await response.json(): await response.text();
-					return {errors: null, data: body, status: response.status};
+					const body = isJsonResponse && res.json && res.json.constructor === Function? 
+						await res.json(): 
+						await res.text();
+
+					return {
+						errors: null, 
+						data: body, 
+						status: res.status, 
+						headers: res.headers
+					};
 				}
 				catch(e)
 				{
-					return {errors: [e.message], data: null};
+					return {
+						errors: [e.message], 
+						data: null
+					};
 				}
 			}
 			else
 			{
-				const body = response && response.json && response.json.constructor === Function? 
-					await response.json(): 
+				const body = res && res.json && res.json.constructor === Function? 
+					await res.json(): 
 					null;
 				
-				return {errors: errors || [], data: body, status: response && response.status};
+				return {
+					errors: errors || [], 
+					data: body, 
+					status: res && res.status
+				};
 			}
 		}
 		catch (e)
 		{
-			return {errors: [e.message], data: null};
+			return {
+				errors: [e.message], 
+				data: null
+			};
 		}
 
 	}

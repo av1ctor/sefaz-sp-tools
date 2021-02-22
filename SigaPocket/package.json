@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/progress-bar-android": "^1.0.4",
+    "@react-native-community/progress-view": "^1.2.4",
     "@react-navigation/drawer": "^5.12.3",
     "@react-navigation/material-bottom-tabs": "^5.3.13",
     "@react-navigation/native": "^5.9.2",
@@ -19,8 +21,10 @@
     "react-native": "0.63.4",
     "react-native-gesture-handler": "^1.10.1",
     "react-native-paper": "^4.7.1",
+    "react-native-pdf": "^6.3.0",
     "react-native-safe-area-context": "^3.1.9",
-    "react-native-vector-icons": "^8.0.0"
+    "react-native-vector-icons": "^8.0.0",
+    "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",

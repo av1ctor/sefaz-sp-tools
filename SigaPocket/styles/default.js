@@ -18,7 +18,13 @@ const styles = StyleSheet.create({
 	},
 	view: {
 		paddingTop: 4,
-	}
+	},
+	pdfContainer: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginTop: 25,
+    }	
 });
 
 export default styles;

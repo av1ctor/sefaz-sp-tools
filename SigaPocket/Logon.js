@@ -5,7 +5,7 @@
 
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import {Image, View} from 'react-native';
+import {Image, View, SafeAreaView, ScrollView} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import styles from './styles/default';
 
@@ -89,8 +89,8 @@ export default class Logon extends PureComponent
 	render()
 	{
 		return (
-			<>
-                <View style={styles.sectionContainer}>
+			<SafeAreaView style={styles.safeAreaView}>
+				<ScrollView style={styles.scrollView}>
                     <View style={styles.view}>
                         <Image 
                             style={styles.logo}
@@ -126,8 +126,8 @@ export default class Logon extends PureComponent
                             <Text style={{color: '#fff'}}>Entrar</Text>
                         </Button>
                     </View>
-                </View>
-			</>
+				</ScrollView>
+			</SafeAreaView>
 		);
 	}
 };
