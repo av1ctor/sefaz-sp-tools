@@ -9,6 +9,7 @@ import SigaApi from './components/SigaApi';
 import Logon from './Logon';
 import Groups from './Groups';
 import Docs from './Docs';
+import Doc from './Doc';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,18 @@ export default class Main extends PureComponent
       				>
 						{props => 
 							<Docs 
+								{...props} 
+								api={this.api} 
+								showMessage={this.showMessage} 
+							/>
+						}
+					</Stack.Screen>
+					<Stack.Screen
+        				name="Doc"
+        				options={{ headerTitle: 'Documento' }}
+      				>
+						{props => 
+							<Doc 
 								{...props} 
 								api={this.api} 
 								showMessage={this.showMessage} 

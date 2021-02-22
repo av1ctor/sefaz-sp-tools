@@ -31,12 +31,13 @@ export default class SigaApi
 		return res;
 	}
 
-	async loadGroups()
+	async loadGroups(params = {}, daLotacao = false)
 	{
 		const data = new FormData();
-		data.append('exibeLotacao', true);
+		data.append('parms', JSON.stringify(params));
+		data.append('exibeLotacao', daLotacao);
 		data.append('trazerAnotacoes', true);
-		data.append('trazerComposto', true);
+		data.append('trazerComposto', false);
 		data.append('trazerArquivados', false);
 		data.append('trazerCancelados', false);
 		data.append('ordemCrescenteData', true);

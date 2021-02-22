@@ -32,18 +32,19 @@ export default class Groups extends PureComponent
 
     renderGroup(group)
     {
-        const docs = group.grupoDocs || [];
-        if(docs.length === 0)
+        const cnt = group.grupoCounterAtivo;
+        if(cnt === 0)
         {
             return null;
         }
 
+        const docs = group.grupoDocs || [];
         return (
             <List.Item 
                 key={group.grupo}
                 title={
                     <Text>
-                        {group.grupoNome + ` (${docs.length})`}
+                        {group.grupoNome + ` (${cnt})`}
                     </Text>
                 } 
                 id={group.grupo}
