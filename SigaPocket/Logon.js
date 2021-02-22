@@ -21,7 +21,10 @@ export default class Logon extends PureComponent
 	{
 		super(props);
 
-		const vars = JSON.parse((process.env['REACT_VARS'] || '').replace(/'/g, '"') || '{}');
+		const vars = JSON.parse(
+			(process.env.NODE_ENV === 'development' && process.env['REACT_VARS'] || '')
+				.replace(/'/g, '"') || 
+			'{}');
 
 		this.state = {
 			username: vars.username || '',
