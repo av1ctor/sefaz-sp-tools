@@ -13,36 +13,6 @@ export default class Docs extends PureComponent
         route: PropTypes.object,
     };
 
-    constructor(props)
-    {
-        super(props);
-    
-        this.state = {
-            group: {}
-        };
-    }
-
-    async componentDidMount()
-    {
-        const {group} = this.props.route.params;
-        
-        const params = {
-            [group.grupoNome]: {
-                grupoOrdem: group.grupoOrdem,
-                grupoQtd: 500,
-                grupoQtdPag: 500,
-                grupoCollapsed: false
-            }
-        };
-
-        const groups = await this.props.api.loadGroups(params);
-        this.setState({
-            group: groups.length > 0? 
-                groups[0]:
-                {}
-        });
-    }
-
     renderDoc(doc)
     {
         return (
@@ -58,7 +28,7 @@ export default class Docs extends PureComponent
 
     render()
     {
-        const {group} = this.state;
+        const {group} = this.props.route.params;
 
         return(
             <SafeAreaView style={styles.safeAreaView}>

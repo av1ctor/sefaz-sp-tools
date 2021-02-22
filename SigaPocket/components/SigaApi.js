@@ -31,22 +31,48 @@ export default class SigaApi
 		return res;
 	}
 
-	async loadGroups(params = {}, daLotacao = false)
+	async loadGroups(daLotacao = false, idVisualizacao = 0)
 	{
-		const data = new FormData();
-		data.append('parms', JSON.stringify(params));
-		data.append('exibeLotacao', daLotacao);
-		data.append('trazerAnotacoes', true);
-		data.append('trazerComposto', false);
-		data.append('trazerArquivados', false);
-		data.append('trazerCancelados', false);
-		data.append('ordemCrescenteData', true);
-		data.append('idVisualizacao', 0);
+		const buildFormData = (params) =>
+		{
+			const data = new FormData();
+			data.append('exibeLotacao', daLotacao);
+			data.append('trazerAnotacoes', true);
+			data.append('trazerComposto', false);
+			data.append('trazerArquivados', false);
+			data.append('trazerCancelados', false);
+			data.append('ordemCrescenteData', true);
+			data.append('idVisualizacao', idVisualizacao);
+			data.append('parms', JSON.stringify(params));
+			return data;
+		};
 
-		const res = await this.post('mesa2.json', data);
+		// primeiro carregar os grupos da raiz
+		let res = await this.post('mesa2.json', buildFormData({}));
 		if(res.errors !== null)
 		{
-			return res;
+			return null;
+		}
+
+		// após, recarregar grupos não vazios com seus documentos
+		const params = {};
+		res.data.forEach(group =>
+		{
+			if(group.grupoCounterAtivo > 0)
+			{
+				params[group.grupoNome] = {
+					grupoOrdem: group.grupoOrdem,
+					grupoQtd: 1000,
+					grupoQtdPag: 1000,
+					grupoCollapsed: false
+				};
+			}
+		});
+
+		res = await this.post('mesa2.json', buildFormData(params));
+		if(res.errors !== null)
+		{
+			return null;
 		}
 		
 		return res.data;
