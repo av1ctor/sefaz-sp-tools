@@ -2,8 +2,9 @@ import React, {useContext, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {SafeAreaView, ScrollView} from 'react-native';
 import {List, Text} from 'react-native-paper';
-import styles from '../styles/default';
 import {DocsContext} from '../contexts/Docs';
+import Util from '../components/Util';
+import styles from '../styles/default';
 
 const Groups = ({api, showMessage, navigation}) =>
 {
@@ -11,21 +12,34 @@ const Groups = ({api, showMessage, navigation}) =>
 
 	useEffect(() => 
 	{
-		(async () => 
+		loadGroups();
+		setInterval(() => loadGroups(false), 1000*60*5);
+	}, []);
+
+	let last = null;
+
+	const loadGroups = async (firstRun = true) =>
+	{
+		const current = await api.loadGroups();
+		if(!current)
 		{
-			const groups = await api.loadGroups();
-			if(!groups)
+			if(!firstRun)
 			{
 				showMessage(['Erro ao carregar grupos de documentos'], 'error');
 			}
+			return;
+		}
 
+		if(!Util.compare(last, current))
+		{
+			last = current;
 			dispatch({
 				type: 'SET_GROUPS',
-				payload: groups || [],
+				payload: current || [],
 			});
 		}
-		)();
-	}, []);
+
+	};
 
 	const renderGroup = (group) =>
 	{
@@ -51,7 +65,7 @@ const Groups = ({api, showMessage, navigation}) =>
 	};
 
 	const {groups} = state;
-
+		
 	return (
 		<SafeAreaView style={styles.safeAreaView}>
 			<ScrollView style={styles.scrollView}>
