@@ -2,6 +2,7 @@
 const ROOT_PATH = 'https://www.documentos.spsempapel.sp.gov.br';
 const BASE_PATH = ROOT_PATH + '/sigaex/app/';
 const LOGIN_URL = ROOT_PATH + '/siga/public/app/login';
+const USER_URL  = ROOT_PATH + '/siga/api/v1/pessoas';
 
 export default class SigaApi 
 {
@@ -28,7 +29,23 @@ export default class SigaApi
 			return {errors: ['Usuário e/ou senha inválidos'], data: null}
 		}
 
-		return res;
+		const user = await this.loadUser(username);
+		return {errors: null, data: user || {}};
+	}
+
+	async loadUser(cpf)
+	{
+		const res = await this.requestURL('GET', `${USER_URL}?cpf=${cpf}`, null, {isJsonResponse: true});
+		if(res.errors !== null)
+		{
+			return null;
+		}
+
+		const data = res.data;
+		console.log(data.list[0]);
+		return data.list && data.list.length > 0?
+			data.list[0]:
+			{};
 	}
 
 	async loadGroups(daLotacao = false, idVisualizacao = 0)

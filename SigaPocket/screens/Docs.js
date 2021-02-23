@@ -1,19 +1,11 @@
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import {SafeAreaView, ScrollView} from 'react-native';
 import {List} from 'react-native-paper';
 import styles from '../styles/default';
 
-export default class Docs extends PureComponent
+const Docs = ({navigation, route}) =>
 {
-    static propTypes = {
-        api: PropTypes.object.isRequired,
-        showMessage: PropTypes.func.isRequired,
-        navigation: PropTypes.object.isRequired,
-        route: PropTypes.object,
-    };
-
-    renderDoc(doc)
+    const renderDoc = (doc) =>
     {
         return (
             <List.Item
@@ -21,21 +13,20 @@ export default class Docs extends PureComponent
                 title={doc.sigla}
                 description={doc.descr}
                 left={props => <List.Icon {...props} icon="file-document" />}
-                onPress={() => this.props.navigation.navigate('Doc', {doc: doc})}
+                onPress={() => navigation.navigate('Doc', {doc: doc})}
             />
         );
-    }
+    };
 
-    render()
-    {
-        const {group} = this.props.route.params;
+    const {group} = route.params;
 
-        return(
-            <SafeAreaView style={styles.safeAreaView}>
-                <ScrollView style={styles.scrollView}>
-                    {(group.grupoDocs || []).map(doc => this.renderDoc(doc))}
-                </ScrollView>              
-            </SafeAreaView>
-        );
-    }
-}
+    return(
+        <SafeAreaView style={styles.safeAreaView}>
+            <ScrollView style={styles.scrollView}>
+                {(group.grupoDocs || []).map(doc => renderDoc(doc))}
+            </ScrollView>              
+        </SafeAreaView>
+    );
+};
+
+export default Docs;

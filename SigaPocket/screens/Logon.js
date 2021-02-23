@@ -3,135 +3,104 @@
  * @flow strict-local
  */
 
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
+import React, {useContext, useState} from 'react';
 import {Image, View, SafeAreaView, ScrollView} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import styles from '../styles/default';
+import {UserContext} from '../contexts/User';
 
-export default class Logon extends PureComponent
+const vars = JSON.parse(
+	(process.env.NODE_ENV === 'development' && process.env['REACT_VARS'] || '')
+		.replace(/'/g, '"') || 
+	'{}');
+
+const Logon = ({api, showMessage, navigation}) =>
 {
-    static propTypes = {
-        api: PropTypes.object.isRequired,
-        showMessage: PropTypes.func.isRequired,
-		navigation: PropTypes.object.isRequired,
-    };
-
-	constructor(props)
+	const [username, setUsername] = useState(vars.username || '');
+	const [password, setPassword] = useState(vars.password || '');
+	const [state, dispatch] = useContext(UserContext);
+	
+	const validateForm = () =>
 	{
-		super(props);
-
-		const vars = JSON.parse(
-			(process.env.NODE_ENV === 'development' && process.env['REACT_VARS'] || '')
-				.replace(/'/g, '"') || 
-			'{}');
-
-		this.state = {
-			username: vars.username || '',
-			password: vars.password || ''
-		};
-	}
-
-	setUsername = (text) =>
-	{
-		this.setState({
-			username: text
-		});
-	}
-
-	setPassword = (text) =>
-	{
-		this.setState({
-			password: text
-		});
-	}
-
-	showMessage(msg, kind)
-	{
-		alert(msg);
-	}
-
-	validateForm()
-	{
-		const {username, password} = this.state;
 		if(!username)
 		{
-			this.props.showMessage('CPF ou matrícula obrigatório', 'error');
+			showMessage('CPF ou matrícula obrigatório', 'error');
 			return false;
 		}
 		
 		if(!password)
 		{
-			this.props.showMessage('Senha obrigatória', 'error');
+			showMessage('Senha obrigatória', 'error');
 			return false;
 		}
 
 		return true;
-	}
+	};
 
 
-	doLogon = async () =>
+	const doLogon = async () =>
 	{
-		if(!this.validateForm())
+		if(!validateForm())
 		{
 			return;
 		}
 		
-		const {username, password} = this.state;
-		
-		const res = await this.props.api.logon(username, password);
+		const res = await api.logon(username, password);
 		if(res.errors !== null)
 		{
-			this.props.showMessage(res.errors, 'error');
+			showMessage(res.errors, 'error');
 			return;
 		}
 
-		this.props.navigation.navigate('Groups');
-	}
+		dispatch({
+			type: 'SET_USER',
+			payload: res.data
+		});
 
-	render()
-	{
-		return (
-			<SafeAreaView style={styles.safeAreaView}>
-				<ScrollView style={styles.scrollView}>
-                    <View style={styles.view}>
-                        <Image 
-                            style={styles.logo}
-                            source={require('../assets/logo-sem-papel-cor.png')}
-                        />
-                    </View>
+		navigation.navigate('Groups');
+	};
 
-                    <View style={styles.view}>
-                        <TextInput
-                            label="Usuário"
-                            placeholder="Digite seu CPF ou matrícula"
-                            onChangeText={this.setUsername}
-                            value={this.state.username}
-                        />
-                    </View>
+	return (
+		<SafeAreaView style={styles.safeAreaView}>
+			<ScrollView style={styles.scrollView}>
+				<View style={styles.view}>
+					<Image 
+						style={styles.logo}
+						source={require('../assets/logo-sem-papel-cor.png')}
+					/>
+				</View>
 
-                    <View style={styles.view}>
-                        <TextInput
-                            secureTextEntry
-                            label="Senha"
-                            placeholder="Senha"
-                            onChangeText={this.setPassword}
-                            value={this.state.password}
-                        />
-                    </View>
+				<View style={styles.view}>
+					<TextInput
+						label="Usuário"
+						placeholder="Digite seu CPF ou matrícula"
+						onChangeText={setUsername}
+						value={state.username}
+					/>
+				</View>
 
-                    <View style={styles.view}>
-                        <Button
-                            mode="contained"
-                            icon="login"
-                            onPress={this.doLogon}
-                        >
-                            <Text style={{color: '#fff'}}>Entrar</Text>
-                        </Button>
-                    </View>
-				</ScrollView>
-			</SafeAreaView>
-		);
-	}
+				<View style={styles.view}>
+					<TextInput
+						secureTextEntry
+						label="Senha"
+						placeholder="Senha"
+						onChangeText={setPassword}
+						value={state.password}
+					/>
+				</View>
+
+				<View style={styles.view}>
+					<Button
+						mode="contained"
+						icon="login"
+						onPress={doLogon}
+					>
+						<Text style={{color: '#fff'}}>Entrar</Text>
+					</Button>
+				</View>
+			</ScrollView>
+		</SafeAreaView>
+	);
 };
 
+export default Logon;

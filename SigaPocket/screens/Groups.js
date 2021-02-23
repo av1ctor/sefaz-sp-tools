@@ -1,36 +1,32 @@
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
+import React, {useContext, useEffect} from 'react';
 import {SafeAreaView, ScrollView} from 'react-native';
 import {List, Text} from 'react-native-paper';
 import styles from '../styles/default';
+import {DocsContext} from '../contexts/Docs';
 
-export default class Groups extends PureComponent
+const Groups = ({api, showMessage, navigation}) =>
 {
-    static propTypes = {
-        api: PropTypes.object.isRequired,
-        showMessage: PropTypes.func.isRequired,
-        navigation: PropTypes.object.isRequired,
-        route: PropTypes.object,
-    };
+    const [state, dispatch] = useContext(DocsContext);
 
-    constructor(props)
+    useEffect(() => 
     {
-        super(props);
+        (async () => 
+            {
+                const groups = await api.loadGroups();
+                if(!groups)
+                {
+                    showMessage(['Erro ao carregar grupos de documentos'], 'error');
+                }
 
-        this.state = {
-            groups: []
-        };
-    }
+                dispatch({
+                    type: 'SET_GROUPS',
+                    payload: groups || [],
+                })
+            }
+        )();
+    }, []);
 
-    async componentDidMount()
-    {
-        const groups = await this.props.api.loadGroups();
-        this.setState({
-            groups: groups
-        });
-    }
-
-    renderGroup(group)
+    const renderGroup = (group) =>
     {
         const cnt = group.grupoCounterAtivo;
         if(cnt === 0)
@@ -49,21 +45,20 @@ export default class Groups extends PureComponent
                 } 
                 id={group.grupo}
                 left={props => <List.Icon {...props} icon="folder" />}
-                onPress={() => this.props.navigation.navigate('Docs', {group: group})}>
+                onPress={() => navigation.navigate('Docs', {group: group})}>
             </List.Item>
         );
-    }
+    };
 
-    render()
-    {
-        const {groups} = this.state;
+    const {groups} = state;
 
-        return(
-            <SafeAreaView style={styles.safeAreaView}>
-                <ScrollView style={styles.scrollView}>
-                    {groups.map(group => this.renderGroup(group))}
-                </ScrollView>              
-            </SafeAreaView>
-        );
-    }
-}
+    return (
+        <SafeAreaView style={styles.safeAreaView}>
+            <ScrollView style={styles.scrollView}>
+                {groups.map(group => renderGroup(group))}
+            </ScrollView>              
+        </SafeAreaView>
+    );
+};
+
+export default Groups;

@@ -11,17 +11,23 @@ import React from 'react';
 import {AppRegistry} from 'react-native';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
+import {UserContextProvider} from './contexts/User';
+import {DocsContextProvider} from './contexts/Docs';
 import Main from './Main';
 import {name as appName} from './app.json';
 
 export default function App() 
 {
 	return (
-		<PaperProvider>
-			<NavigationContainer>
-				<Main />
-		  	</NavigationContainer>
-	  	</PaperProvider>
+		<UserContextProvider>
+			<DocsContextProvider>
+				<PaperProvider>
+					<NavigationContainer>
+						<Main />
+					</NavigationContainer>
+				</PaperProvider>
+			</DocsContextProvider>
+		</UserContextProvider>
 	);
 }
 
