@@ -10,7 +10,7 @@ import styles from '../styles/default';
 import {UserContext} from '../contexts/User';
 
 const vars = JSON.parse(
-	(process.env.NODE_ENV === 'development' && process.env['REACT_VARS'] || '')
+	(process.env.NODE_ENV === 'development'? process.env.REACT_VARS || '': '')
 		.replace(/'/g, '"') || 
 	'{}');
 
@@ -19,7 +19,7 @@ const Logon = ({api, showMessage, navigation}) =>
 	const [username, setUsername] = useState(vars.username || '');
 	const [password, setPassword] = useState(vars.password || '');
 	const [state, dispatch] = useContext(UserContext);
-	
+
 	const validateForm = () =>
 	{
 		if(!username)

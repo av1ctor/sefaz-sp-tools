@@ -3,7 +3,13 @@ module.exports = {
     'module:metro-react-native-babel-preset'
   ],
   plugins: [
-    'transform-inline-environment-variables'
+    ['transform-inline-environment-variables',
+      {
+        "include": [
+          "REACT_VARS"
+        ]
+      }    
+    ]
   ],
   env: {
     production: {
