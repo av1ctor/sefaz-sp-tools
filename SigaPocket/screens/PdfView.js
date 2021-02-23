@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {StyleSheet, Dimensions, View} from 'react-native';
 import {Text} from 'react-native-paper';
 import Pdf from 'react-native-pdf';
-import styles from './styles/default';
+import styles from '../styles/default';
 
 export default class PdfView extends PureComponent
 {

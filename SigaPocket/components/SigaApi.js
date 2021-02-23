@@ -137,7 +137,6 @@ export default class SigaApi
 			abortController = null
 		})
 	{
-		console.log(`${method}:${isJsonRequest}:${isJsonResponse}:${url}:${data}`);
 		try
 		{
 			const options = {

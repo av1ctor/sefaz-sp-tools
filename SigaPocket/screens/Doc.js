@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {SafeAreaView, ScrollView, View} from 'react-native';
 import {Badge, Button, Text, TextInput} from 'react-native-paper';
-import styles from './styles/default';
+import styles from '../styles/default';
 
 export default class Doc extends PureComponent
 {

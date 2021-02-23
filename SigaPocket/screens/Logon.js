@@ -7,7 +7,7 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {Image, View, SafeAreaView, ScrollView} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
-import styles from './styles/default';
+import styles from '../styles/default';
 
 export default class Logon extends PureComponent
 {
@@ -97,7 +97,7 @@ export default class Logon extends PureComponent
                     <View style={styles.view}>
                         <Image 
                             style={styles.logo}
-                            source={require('./assets/logo-sem-papel-cor.png')}
+                            source={require('../assets/logo-sem-papel-cor.png')}
                         />
                     </View>
 

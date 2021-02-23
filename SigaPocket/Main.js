@@ -6,11 +6,11 @@
 import React, {PureComponent} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import SigaApi from './components/SigaApi';
-import Logon from './Logon';
-import Groups from './Groups';
-import Docs from './Docs';
-import Doc from './Doc';
-import PdfView from './PdfView';
+import Logon from './screens/Logon';
+import Groups from './screens/Groups';
+import Docs from './screens/Docs';
+import Doc from './screens/Doc';
+import PdfView from './screens/PdfView';
 
 const Stack = createStackNavigator();
 

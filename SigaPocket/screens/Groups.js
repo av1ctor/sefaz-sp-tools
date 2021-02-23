@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {SafeAreaView, ScrollView} from 'react-native';
 import {List, Text} from 'react-native-paper';
-import styles from './styles/default';
+import styles from '../styles/default';
 
 export default class Groups extends PureComponent
 {
