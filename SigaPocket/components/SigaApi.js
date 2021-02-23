@@ -21,12 +21,12 @@ export default class SigaApi
 		{
 			if(res.data !== null && res.data.indexOf('"app/principal"') === -1)
 			{
-				return {errors: ['Usuário e/ou senha inválidos'], data: null}
+				return {errors: ['Usuário e/ou senha inválidos'], data: null};
 			}
 		}
 		else if(res.status !== 302)
 		{
-			return {errors: ['Usuário e/ou senha inválidos'], data: null}
+			return {errors: ['Usuário e/ou senha inválidos'], data: null};
 		}
 
 		const user = await this.loadUser(username);
@@ -42,7 +42,6 @@ export default class SigaApi
 		}
 
 		const data = res.data;
-		console.log(data.list[0]);
 		return data.list && data.list.length > 0?
 			data.list[0]:
 			{};
@@ -103,12 +102,12 @@ export default class SigaApi
 			return matches? 
 				matches[1]: 
 				'';
-		}
+		};
 		
 		// dar início a geração do PDF
 		const res = await this.get(
 			`arquivo/exibir?idVisualizacao=0&arquivo=${nome}.pdf&completo=1&semmarcas=${semMarcas? 1: 0}`, 
-			{isJsonResponse: false})
+			{isJsonResponse: false});
 		if(res.errors !== null)
 		{
 			return null;
@@ -117,9 +116,10 @@ export default class SigaApi
 		// encontrar URL e id do PDF
 		const url = extractText(res.data, /window\.location = "(.*?)"/);
 
-		const id = extractText(res.data, /this\.start\('[a-zA-Z0-9\-_\.]+', '(.*?)'/);
+		const id = extractText(res.data, /this\.start\('[a-zA-Z0-9\-_.]+', '(.*?)'/);
 
 		// aguardar geração do PDF terminar
+		// eslint-disable-next-line no-constant-condition
 		while(true)
 		{
 			const res = await this.requestURL(
@@ -138,7 +138,7 @@ export default class SigaApi
 				break;
 			}
 
-			onProgress && onProgress(res.data.indice / res.data.contador)
+			onProgress && onProgress(res.data.indice / res.data.contador);
 		}
 
 		return ROOT_PATH + url;

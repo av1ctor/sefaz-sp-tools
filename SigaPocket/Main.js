@@ -3,7 +3,7 @@
  * @flow strict-local
  */
 
-import React, {PureComponent} from 'react';
+import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import SigaApi from './components/SigaApi';
 import Logon from './screens/Logon';
@@ -14,87 +14,81 @@ import PdfView from './screens/PdfView';
 
 const Stack = createStackNavigator();
 
-export default class Main extends PureComponent
+const Main = () =>
 {
-	constructor(props)
-	{
-		super(props);
+	const api = new SigaApi();
 
-		this.api = new SigaApi();
-	}
-
-	showMessage(msg, kind)
+	const showMessage = (msg, kind) =>
 	{
 		alert(msg);
-	}
+	};
 
-	render()
-	{
-		return (
-			<>
-				<Stack.Navigator initialRouteName="Logon">
-					<Stack.Screen
-        				name="Logon"
-        				options={{ headerTitle: 'Logon' }}
-      				>
-						{props => 
-							<Logon 
-								{...props} 
-								api={this.api} 
-								showMessage={this.showMessage} 
-							/>
-						}
-					</Stack.Screen>
-      				<Stack.Screen
-        				name="Groups"
-        				options={{ headerTitle: 'Grupos' }}
-      				>
-						{props => 
-							<Groups 
-								{...props} 
-								api={this.api} 
-								showMessage={this.showMessage} 
-							/>
-						}
-					</Stack.Screen>
-					<Stack.Screen
-        				name="Docs"
-        				options={{ headerTitle: 'Documentos' }}
-      				>
-						{props => 
-							<Docs 
-								{...props} 
-								api={this.api} 
-								showMessage={this.showMessage} 
-							/>
-						}
-					</Stack.Screen>
-					<Stack.Screen
-        				name="Doc"
-        				options={{ headerTitle: 'Documento' }}
-      				>
-						{props => 
-							<Doc 
-								{...props} 
-								api={this.api} 
-								showMessage={this.showMessage} 
-							/>
-						}
-					</Stack.Screen>
-					<Stack.Screen
-        				name="PdfView"
-        				options={{ headerTitle: 'PDF' }}
-      				>
-						{props => 
-							<PdfView 
-								{...props} 
-								api={this.api} 
-								showMessage={this.showMessage} 
-							/>
-						}
-					</Stack.Screen>
-				</Stack.Navigator>
-			</>
-		);
-	}
+	return (
+		<>
+			<Stack.Navigator initialRouteName="Logon">
+				<Stack.Screen
+					name="Logon"
+					options={{ headerTitle: 'Logon' }}
+				>
+					{props => 
+						<Logon 
+							{...props} 
+							api={api} 
+							showMessage={showMessage} 
+						/>
+					}
+				</Stack.Screen>
+				<Stack.Screen
+					name="Groups"
+					options={{ headerTitle: 'Grupos' }}
+				>
+					{props => 
+						<Groups 
+							{...props} 
+							api={api} 
+							showMessage={showMessage} 
+						/>
+					}
+				</Stack.Screen>
+				<Stack.Screen
+					name="Docs"
+					options={{ headerTitle: 'Documentos' }}
+				>
+					{props => 
+						<Docs 
+							{...props} 
+							api={api} 
+							showMessage={showMessage} 
+						/>
+					}
+				</Stack.Screen>
+				<Stack.Screen
+					name="Doc"
+					options={{ headerTitle: 'Documento' }}
+				>
+					{props => 
+						<Doc 
+							{...props} 
+							api={api} 
+							showMessage={showMessage} 
+						/>
+					}
+				</Stack.Screen>
+				<Stack.Screen
+					name="PdfView"
+					options={{ headerTitle: 'PDF' }}
+				>
+					{props => 
+						<PdfView 
+							{...props} 
+							api={api} 
+							showMessage={showMessage} 
+						/>
+					}
+				</Stack.Screen>
+			</Stack.Navigator>
+		</>
+	);
 };
+
+export default Main;

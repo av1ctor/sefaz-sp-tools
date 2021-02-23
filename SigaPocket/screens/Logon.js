@@ -4,6 +4,7 @@
  */
 
 import React, {useContext, useState} from 'react';
+import PropTypes from 'prop-types';
 import {Image, View, SafeAreaView, ScrollView} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
 import styles from '../styles/default';
@@ -101,6 +102,12 @@ const Logon = ({api, showMessage, navigation}) =>
 			</ScrollView>
 		</SafeAreaView>
 	);
+};
+
+Logon.propTypes = {
+	api: PropTypes.object,
+	showMessage: PropTypes.func,
+	navigation: PropTypes.object,
 };
 
 export default Logon;
