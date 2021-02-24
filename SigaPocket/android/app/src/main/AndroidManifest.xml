@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -26,6 +28,14 @@
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
+      <service android:name=".DocsSyncService" />
+
+      <receiver android:name=".DocsSyncReceiver" android:exported="true">
+        <intent-filter>
+          <action android:name=".DOCS_SYNC" />
+        </intent-filter>     
+      </receiver>
 
       <!-- react-native-push-notification -->
       <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->

@@ -219,29 +219,29 @@ export default class SigaApi
 
 	}
 
-	async get(path, options = {})
+	get(path, options = {})
 	{
-		return await this.requestURL('GET', BASE_PATH + path, null, options);
+		return this.requestURL('GET', BASE_PATH + path, null, options);
 	}
 
-	async post(path, data, options = {})
+	post(path, data, options = {})
 	{
-		return await this.requestURL('POST', BASE_PATH + path, data, options);
+		return this.requestURL('POST', BASE_PATH + path, data, options);
 	}
 
-	async put(path, data, options = {})
+	put(path, data, options = {})
 	{
-		return await this.requestURL('PUT', BASE_PATH + path, data, options);
+		return this.requestURL('PUT', BASE_PATH + path, data, options);
 	}
 
-	async patch(path, data, options = {})
+	patch(path, data, options = {})
 	{
-		return await this.requestURL('PATCH', BASE_PATH + path, data, options);
+		return this.requestURL('PATCH', BASE_PATH + path, data, options);
 	}
 
-	async del(path, options = {})
+	del(path, options = {})
 	{
-		return await this.requestURL('DELETE', BASE_PATH + path, null, options);
+		return this.requestURL('DELETE', BASE_PATH + path, null, options);
 	}
 
 	cancel(abortController)
