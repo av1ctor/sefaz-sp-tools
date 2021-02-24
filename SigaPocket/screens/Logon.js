@@ -7,19 +7,15 @@ import React, {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Image, View, SafeAreaView, ScrollView} from 'react-native';
 import {Button, Text, TextInput} from 'react-native-paper';
+import {USERNAME_, PASSWORD_} from '@env';
 import styles from '../styles/default';
 import {UserContext} from '../contexts/User';
 
-const vars = JSON.parse(
-	(process.env.NODE_ENV === 'development'? process.env.REACT_VARS || '': '')
-		.replace(/'/g, '"') || 
-	'{}');
-
 const Logon = ({api, showMessage, navigation}) =>
 {
-	const [username, setUsername] = useState(vars.username || '');
-	const [password, setPassword] = useState(vars.password || '');
-	const [state, dispatch] = useContext(UserContext);
+	const [username, setUsername] = useState(USERNAME_ || '');
+	const [password, setPassword] = useState(PASSWORD_ || '');
+	const [, dispatch] = useContext(UserContext);
 
 	const validateForm = () =>
 	{
@@ -67,6 +63,7 @@ const Logon = ({api, showMessage, navigation}) =>
 				<View style={styles.view}>
 					<Image 
 						style={styles.logo}
+						// eslint-disable-next-line no-undef
 						source={require('../assets/logo-sem-papel-cor.png')}
 					/>
 				</View>
@@ -76,7 +73,7 @@ const Logon = ({api, showMessage, navigation}) =>
 						label="Usuário"
 						placeholder="Digite seu CPF ou matrícula"
 						onChangeText={setUsername}
-						value={state.username}
+						value={username}
 					/>
 				</View>
 
@@ -86,7 +83,7 @@ const Logon = ({api, showMessage, navigation}) =>
 						label="Senha"
 						placeholder="Senha"
 						onChangeText={setPassword}
-						value={state.password}
+						value={password}
 					/>
 				</View>
 

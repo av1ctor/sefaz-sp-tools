@@ -4,8 +4,8 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {createStackNavigator} from '@react-navigation/stack';
-import SigaApi from './components/SigaApi';
 import Logon from './screens/Logon';
 import Groups from './screens/Groups';
 import Docs from './screens/Docs';
@@ -14,10 +14,8 @@ import PdfView from './screens/PdfView';
 
 const Stack = createStackNavigator();
 
-const Main = () =>
+const Main = ({api}) =>
 {
-	const api = new SigaApi();
-
 	const showMessage = (msg, kind) =>
 	{
 		alert(msg);
@@ -89,6 +87,10 @@ const Main = () =>
 			</Stack.Navigator>
 		</>
 	);
+};
+
+Main.propTypes = {
+	api: PropTypes.object
 };
 
 export default Main;

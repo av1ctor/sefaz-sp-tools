@@ -13,7 +13,7 @@ const Groups = ({api, showMessage, navigation}) =>
 	useEffect(() => 
 	{
 		loadGroups();
-		setInterval(() => loadGroups(false), 1000*60*5);
+		setInterval(() => loadGroups(false), 1000*60*1);
 	}, []);
 
 	let last = null;

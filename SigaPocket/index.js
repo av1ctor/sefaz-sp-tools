@@ -13,8 +13,11 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
 import {UserContextProvider} from './contexts/User';
 import {DocsContextProvider} from './contexts/Docs';
+import SigaApi from './components/SigaApi';
 import Main from './Main';
 import {name as appName} from './app.json';
+
+const api = new SigaApi();
 
 export default function App() 
 {
@@ -23,7 +26,7 @@ export default function App()
 			<DocsContextProvider>
 				<PaperProvider>
 					<NavigationContainer>
-						<Main />
+						<Main api={api} />
 					</NavigationContainer>
 				</PaperProvider>
 			</DocsContextProvider>
