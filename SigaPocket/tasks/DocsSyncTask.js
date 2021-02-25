@@ -1,50 +1,77 @@
-import Util from '../components/Util';
-import SigaApi from '../components/SigaApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SigaApi from '../components/SigaApi';
+import Notificator from '../components/Notificator';
 
-let last = null;
+const config = {
+	groups: null,
+	running: false
+};
+
+const CHANNEL_ID = 'siga-pocket-chan';
 
 const DocsSyncTask = async (params) =>
 {
-	const loadUser = async () =>
+	if(config.running)
 	{
-		const username = await AsyncStorage.getItem('@username');
-		const password = await AsyncStorage.getItem('@password');
-		return {username, password};
-	};
-
-	const user = await loadUser();
-	if(!user.username || !user.password)
-	{
-		console.error('Erro: sem nome/pwd de usuário');
 		return;
 	}
-
-	const api = new SigaApi();	
 	
-	const res = await api.logon(user.username, user.password);
-	if(res.errors !== null)
+	try
 	{
-		console.error('Erro: api.logon() falhou');
-		return;
-	}
+		config.running = true;
 
-	const groups = await api.loadGroups();
-	if(!groups)
+		const loadUser = async () =>
+		{
+			const username = await AsyncStorage.getItem('@username');
+			const password = await AsyncStorage.getItem('@password');
+			return {username, password};
+		};
+
+		Notificator.config((msg) =>
+		{
+			AsyncStorage.setItem('@reloadGroups', '1');
+		});
+
+		const user = await loadUser();
+		if(!user.username || !user.password)
+		{
+			console.error('Erro: sem nome/pwd de usuário');
+			return;
+		}
+
+		const api = new SigaApi();	
+		
+		const res = await api.logon(user.username, user.password);
+		if(res.errors !== null)
+		{
+			console.error('Erro: api.logon() falhou');
+			return;
+		}
+
+		const groups = await api.loadGroups();
+		if(!groups)
+		{
+			console.error('Erro: api.loadGroups() falhou');
+			return;
+		}
+
+		if(api.compareGroups(config.groups, groups))
+		{
+			return;
+		}
+
+		const firstRun = config.groups === null;
+		config.groups = groups;
+		
+		if(!firstRun)
+		{
+			Notificator.notify('Atualização ocorrida na mesa', CHANNEL_ID);
+		}
+	}
+	finally
 	{
-		console.error('Erro: api.loadGroups() falhou');
-		return;
+		config.running = false;
 	}
-
-	if(Util.compare(last, groups))
-	{
-		console.log('Grupos não atualizados');
-		return;
-	}
-
-	last = groups;
-	console.log('Grupos atualizados!');
-	console.log(groups);
 };
 
 

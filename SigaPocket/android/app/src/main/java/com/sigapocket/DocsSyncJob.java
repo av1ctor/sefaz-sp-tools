@@ -34,7 +34,7 @@ public class DocsSyncJob extends JobService
 		}
 		catch(Exception e)
 		{
-			Log.e("DocsSyncJob", e.getMessage());
+			Log.e("SigaPocket", e.getMessage());
 		}
 			
 		Util.scheduleJob(context, INTERVAL, DocsSyncJob.class);

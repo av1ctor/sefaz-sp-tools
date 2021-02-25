@@ -56,7 +56,7 @@ public class DocsSyncService extends HeadlessJsTaskService
                     Util.createNotificationChannel(
                         this, 
                         "siga-pocket-chan", 
-                        "SigaPocketChannel"));
+                        "SigaPocket"));
             builder.setPriority(NotificationCompat.PRIORITY_MIN);
 
             startForeground(1, builder.build());

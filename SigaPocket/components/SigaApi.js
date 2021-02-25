@@ -94,6 +94,114 @@ export default class SigaApi
 		return res.data;
 	}
 
+	compareGroups(v1, v2)
+	{
+		if(!v1)
+		{
+			return !v2;
+		}
+		else if(!v2)
+		{
+			return false;
+		}
+
+		if(v1.constructor !== Array || v2.constructor !== Array)
+		{
+			throw new Error('v1 and v2 should be Arrays');
+		}
+
+		if(v1.length !== v2.length)
+		{
+			return false;
+		}
+
+		for(let i = 0; i < v1.length; i++)
+		{
+			const g1 = v1[i];
+			const g2 = v2.find(g => g.grupo === g1.grupo);
+			if(!g2)
+			{
+				return false;
+			}
+
+			if(g1.grupoCounterAtivo !== g2.grupoCounterAtivo)
+			{
+				return false;
+			}
+
+			if(!g1.grupoDocs)
+			{
+				if(g2.grupoDocs)
+				{
+					return false;
+				}
+			}
+			else if(!g2.grupoDocs)
+			{
+				return false;
+			}
+
+			if(g1.grupoDocs)
+			{
+				if(g1.grupoDocs.length !== g2.grupoDocs.length)
+				{
+					return false;
+				}
+
+				for(let j = 0; j < g1.grupoDocs.length; j++)
+				{
+					const d1 = g1.grupoDocs[j];
+					const d2 = g2.grupoDocs.find(d => d.codigo === d1.codigo);
+					if(!d2)
+					{
+						return false;
+					}
+
+					const mov1 = d1.list;
+					const mov2 = d2.list;
+					if(!mov1)
+					{
+						if(mov2)
+						{
+							return false;
+						}
+					}
+					else if(!mov2)
+					{
+						return false;
+					}
+
+					if(mov1.length !== mov2.length)
+					{
+						return false;
+					}
+
+					for(let k = 0; k < mov1.length; k++)
+					{
+						const m1 = mov1[k];
+						const m2 = mov2.find(m => m.nome === m1.nome);
+						if(!m2)
+						{
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+		for(let i = 0; i < v2.length; i++)
+		{
+			const g2 = v2[i];
+			const g1 = v1.find(g => g.grupo === g2.grupo);
+			if(!g1)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	async loadPdf(nome, semMarcas, onProgress)
 	{
 		const extractText = (from, pattern) =>
