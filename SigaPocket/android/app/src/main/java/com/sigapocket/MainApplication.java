@@ -8,6 +8,11 @@ import android.content.Context;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ComponentName;
+import android.app.job.JobParameters;
+import android.app.job.JobService;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -55,24 +60,12 @@ public class MainApplication extends Application implements ReactApplication
 		super.onCreate();
 		SoLoader.init(this, /* native exopackage */ false);
 		initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-		startTimer();
+		startDocsSyncJob();
 	}
 
-	private static long INTERVAL = 1000 * 60 * 5;
-
-	private void startTimer()
+	private void startDocsSyncJob()
 	{
-		AlarmManager alarmManager =
-			(AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-		Intent intent = new Intent(this, DocsSyncReceiver.class);
-		intent.setAction("com.sigapocket.DOCS_SYNC");
-
-		PendingIntent pendingIntent =
-			PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-			SystemClock.elapsedRealtime() + INTERVAL, INTERVAL, pendingIntent);			
+		Util.scheduleJob(this, DocsSyncJob.INTERVAL, DocsSyncJob.class);
 	}
 
 	/**

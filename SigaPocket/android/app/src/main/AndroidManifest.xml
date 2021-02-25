@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
       android:name=".MainApplication"
@@ -31,11 +32,7 @@
 
       <service android:name=".DocsSyncService" />
 
-      <receiver android:name=".DocsSyncReceiver" android:exported="true">
-        <intent-filter>
-          <action android:name=".DOCS_SYNC" />
-        </intent-filter>     
-      </receiver>
+      <service android:name=".DocsSyncJob" android:permission="android.permission.BIND_JOB_SERVICE"/>
 
       <!-- react-native-push-notification -->
       <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->
