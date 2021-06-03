@@ -62,3 +62,4 @@ buck-out/
 android/gradle/wrapper/gradle-wrapper.jar
 *.csv
 *.xlsx
+*.db

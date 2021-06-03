@@ -1,4 +1,10 @@
-
+function sleep(ms) 
+{
+	return new Promise((resolve) => 
+	{
+	  setTimeout(resolve, ms);
+	});
+  } 
 
 function memoize(method, options = {ttl: null}) 
 {
@@ -68,4 +74,4 @@ function csv2json(text)
 	return res;
 }
 
-module.exports = {memoize, lastDayOfMonth, dateToString, csv2json};
+module.exports = {sleep, memoize, lastDayOfMonth, dateToString, csv2json};

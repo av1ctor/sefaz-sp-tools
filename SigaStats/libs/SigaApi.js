@@ -2,7 +2,7 @@ const FormData = require('form-data');
 const nodeFetch = require('node-fetch');
 const fetch = require('fetch-cookie/node-fetch')(nodeFetch);
 const iconv = require('iconv-lite');
-const {memoize} = require('./Util');
+const {sleep, memoize} = require('./Util');
 
 const ROOT_PATH = 'https://www.documentos.spsempapel.sp.gov.br';
 const BASE_PATH = ROOT_PATH + '/sigaex/app/';
@@ -29,8 +29,8 @@ const findAllDocsTemplate = {
 	"paramoffset":"0",
 	"p.offset":"0",
 	"descrDocumento":"",
-	"ultMovIdEstadoDoc":"9", //Juntada
-	"ultMovTipoResp":"2",
+	"ultMovIdEstadoDoc":"0",
+	"ultMovTipoResp":"2", //unidade
 	"requltMovRespSel":"",
 	"alterouSel":"",
 	"ultMovRespSel.id":"",
@@ -42,11 +42,11 @@ const findAllDocsTemplate = {
 	"ultMovLotaRespSel.descricao":"",
 	"ultMovLotaRespSel.buscar":"",
 	"ultMovLotaRespSel.sigla":"",
-	"orgaoUsu":"118", // SEFAZ-SP
+	"orgaoUsu":"",
 	"dtDocString": "",
 	"dtDocFinalString": "",
 	"idTipoFormaDoc":"0",
-	"idFormaDoc":"8", // DES -- Despacho
+	"idFormaDoc":"0",
 	"idMod":"0",
 	"anoEmissaoString":"0",
 	"numExpediente":"",
@@ -100,6 +100,34 @@ const findAllDocsTemplate = {
 	"visualizacao":"0"
   };
 
+const findAllUnitsTemplate = {
+	"buscarFechadas":"true",
+	"propriedade":"lotaCadastrante",
+	"postback":"1",
+	"paramoffset":"0",
+	"p.offset":"0",
+	"modal":"true",
+	"sigla":"",
+	"idOrgaoUsu":""
+  };
+
+  const findAllUsersTemplate = {
+	"propriedade":"cadastrante",
+	"postback":"1",
+	"paramoffset":"0",
+	"p.offset":"0",
+	"buscarFechadas":"true",
+	"modal":"true",
+	"sigla":"",
+	"reqlotacaoSel":"",
+	"alterouSel":"",
+	"lotacaoSel.id":"",
+	"lotacaoSel.descricao":"",
+	"lotacaoSel.buscar":"",
+	"lotacaoSel.sigla":"",
+	"idOrgaoUsu":""
+};
+
 class SigaApi 
 {
 	async logon(username, password)
@@ -107,7 +135,7 @@ class SigaApi
 		const data = new FormData();
 		data.append('username', username);
 		data.append('password', password);
-		
+
 		const res = await this.requestURL('POST', LOGIN_URL, data, {responseType: CONTENT_TYPE_TEXT});
 		if(res.errors !== null)
 		{
@@ -491,18 +519,155 @@ class SigaApi
 
 	});
 
+	async findAllUnits(org, offset)
+	{
+		const extractUnits = (body) =>
+		{
+			const res = [];
+			while(body.length > 0)
+			{
+				const match = /retorna_lotaCadastrante\('(.*?)','(.*?)','(.*?)'\)/.exec(body);
+				if(!match)
+				{
+					break;
+				}
+
+				res.push({
+					id: match[1],
+					sigla: match[2],
+					descricao: match[3]
+				});
+
+				body = body.substr(match.index + 'retorna_lotaCadastrante'.length);
+			}
+
+			return res;
+		};
+
+		const getNextOffset = (body, offset) =>
+		{
+			let maxOffset = -1;
+			while(body.length > 0)
+			{
+				const match = /javascript:sbmt\(([0-9]+)\)/.exec(body);
+				if(!match)
+				{
+					break;	
+				}
+
+				maxOffset = parseInt(match[1]);
+				if(maxOffset > offset)
+				{
+					break;
+				}
+
+				body = body.substr(match.index + 'javascript:sbmt'.length);
+			}
+
+			return maxOffset > offset?
+				maxOffset:
+				-1;
+		};
+		
+		const data = new FormData();
+		const query = Object.assign({}, findAllUnitsTemplate, {idOrgaoUsu: org, "p.offset": offset, "paramoffset": offset});
+		Object.entries(query).forEach(([key, value]) => data.append(key, value));
+		const res = await this.post(ROOT_PATH + '/siga/app/lotacao/buscar', data, {responseType: CONTENT_TYPE_TEXT})
+		if(res.errors)
+		{
+			return res;
+		}
+
+		const units = extractUnits(res.data);
+			
+		return {
+			errors: null,
+			data: units,
+			offset: getNextOffset(res.data, offset)
+		};
+	}
+
+	async findAllUsers(org, offset)
+	{
+		const extractUsers = (body) =>
+		{
+			const res = [];
+			while(body.length > 0)
+			{
+				const match = /retorna_cadastrante\('(.*?)','(.*?)','(.*?)'/.exec(body);
+				if(!match)
+				{
+					break;
+				}
+
+				res.push({
+					id: match[1],
+					sigla: match[2],
+					nome: match[3]
+				});
+
+				body = body.substr(match.index + 'retorna_cadastrante'.length);
+			}
+
+			return res;
+		};
+
+		const getNextOffset = (body, offset) =>
+		{
+			let maxOffset = -1;
+			while(body.length > 0)
+			{
+				const match = /javascript:sbmt\(([0-9]+)\)/.exec(body);
+				if(!match)
+				{
+					break;	
+				}
+
+				maxOffset = parseInt(match[1]);
+				if(maxOffset > offset)
+				{
+					break;
+				}
+
+				body = body.substr(match.index + 'javascript:sbmt'.length);
+			}
+
+			return maxOffset > offset?
+				maxOffset:
+				-1;
+		};
+		
+		const data = new FormData();
+		const query = Object.assign({}, findAllUsersTemplate, {idOrgaoUsu: org, "p.offset": offset, "paramoffset": offset});
+		Object.entries(query).forEach(([key, value]) => data.append(key, value));
+		const res = await this.post(ROOT_PATH + '/siga/app/pessoa/buscar', data, {responseType: CONTENT_TYPE_TEXT})
+		if(res.errors)
+		{
+			return res;
+		}
+
+		const users = extractUsers(res.data);
+
+		return {
+			errors: null,
+			data: users,
+			offset: getNextOffset(res.data, offset)
+		};
+	}
+
 	async requestURL(
 		method, 
 		url, 
 		data = null, 
-		{
-			requestType = CONTENT_TYPE_RAW, 
-			responseType = CONTENT_TYPE_JSON, 
+		options = {
+			requestType: CONTENT_TYPE_RAW, 
+			responseType: CONTENT_TYPE_JSON,
+			retryCnt: 0
 		})
 	{
 		try
 		{
-			const options = {
+			const opts = {
 				method: method,
 				headers: {
 					'Accept-Encoding': 'gzip,deflate',
@@ -511,23 +676,23 @@ class SigaApi
 
 			if(data !== null)
 			{
-				options.body = requestType !== CONTENT_TYPE_JSON? 
+				opts.body = options.requestType !== CONTENT_TYPE_JSON? 
 					data: 
 					JSON.stringify(data);
 			}
 
 			let errors = null;
 			
-			const res = await fetch(url, options)
+			const res = await fetch(url, opts)
 				.catch((e) => {if(!errors) errors = e.message;});
 
 			if(errors === null && res && res.ok)
 			{
 				try
 				{
-					const body = responseType === CONTENT_TYPE_JSON && res.json && res.json.constructor === Function? 
+					const body = options.responseType === CONTENT_TYPE_JSON && res.json && res.json.constructor === Function? 
 						await res.json(): 
-						responseType === CONTENT_TYPE_TEXT?
+						options.responseType === CONTENT_TYPE_TEXT?
 						 	await res.text():
 							await res.buffer();
 
@@ -548,8 +713,18 @@ class SigaApi
 			}
 			else
 			{
+				if(errors && errors.indexOf('ETIMEDOUT') !== -1)
+				{
+					const retryCnt = options.retryCnt||0;
+					if(retryCnt < 3)
+					{
+						await sleep(Math.pow(2, retryCnt+1) * 3000);
+						return this.requestURL(method, url, data, {...options, retryCnt: options.retryCnt+1});
+					}
+				}
+				
 				const body = res? 
-					responseType === CONTENT_TYPE_JSON && res.json && res.json.constructor === Function? 
+					options.responseType === CONTENT_TYPE_JSON && res.json && res.json.constructor === Function? 
 						await res.json(): 
 						res.text && res.text.constructor === Function? 
 							await res.text():
@@ -575,27 +750,27 @@ class SigaApi
 
 	get(path, options = {})
 	{
-		return this.requestURL('GET', BASE_PATH + path, null, options);
+		return this.requestURL('GET', (path.indexOf('://') === -1? BASE_PATH: '') + path, null, options);
 	}
 
 	post(path, data, options = {})
 	{
-		return this.requestURL('POST', BASE_PATH + path, data, options);
+		return this.requestURL('POST', (path.indexOf('://') === -1? BASE_PATH: '') + path, data, options);
 	}
 
 	put(path, data, options = {})
 	{
-		return this.requestURL('PUT', BASE_PATH + path, data, options);
+		return this.requestURL('PUT', (path.indexOf('://') === -1? BASE_PATH: '') + path, data, options);
 	}
 
 	patch(path, data, options = {})
 	{
-		return this.requestURL('PATCH', BASE_PATH + path, data, options);
+		return this.requestURL('PATCH', (path.indexOf('://') === -1? BASE_PATH: '') + path, data, options);
 	}
 
 	del(path, options = {})
 	{
-		return this.requestURL('DELETE', BASE_PATH + path, null, options);
+		return this.requestURL('DELETE', (path.indexOf('://') === -1? BASE_PATH: '') + path, null, options);
 	}
 }
 
