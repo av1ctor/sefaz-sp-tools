@@ -1,3 +1,5 @@
+const iconv = require('iconv-lite');
+
 function sleep(ms) 
 {
 	return new Promise((resolve) => 
@@ -74,4 +76,27 @@ function csv2json(text)
 	return res;
 }
 
-module.exports = {sleep, memoize, lastDayOfMonth, dateToString, csv2json};
+function objectsToCsv(objs)
+{
+    let res = '';
+    
+    if(objs && objs.length > 0)
+    {
+        res += Object.keys(objs[0]).join(';') + '\n';
+        res += objs.map(obj => Object.values(obj).map(val => `"${val}"`).join(';')).join('\n');
+    }
+
+    return iconv.encode(res, 'latin1');
+}
+
+function array2map(arr, keys)
+{
+	return arr.reduce((map, item) => 
+	{
+		const key = keys.reduce((res, k) => res + (item[k] || ''), '');
+		map.set(key, item);
+		return map;
+	}, new Map());
+}
+
+module.exports = {sleep, memoize, lastDayOfMonth, dateToString, csv2json, objectsToCsv, array2map};

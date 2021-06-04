@@ -469,20 +469,22 @@ class SigaApi
 
 		const body = res.data.replace(/[\r\n\t]/g, '');
 
-		const q = 'Documento Pai:</b><a href="/sigaex/app/expediente/doc/exibir?sigla=';
-		const s = body.indexOf(q);
-		if(s < 0)
+		const desc = /Documento Pai:<\/b><a href="\/sigaex\/app\/expediente\/doc\/exibir\?sigla=(.*?)"/.exec(body);
+		if(!desc)
 		{
 			return {
 				errors: ['Documento pai não encontrado']
 			};
 		}
 
-		const e = body.substring(s + q.length).indexOf('"');
+		const data = /Data de Assinatura\/Autenticação \:<\/b>(\d{2}\/\d{2}\/\d{2})/.exec(body);
 
 		return {
 			errors: null,
-			data: body.substring(s + q.length, s + q.length + e)
+			data: {
+				'Número': desc[1].trim(),
+				'Data': data? data[1].substring(0, 6) + '20' + data[1].substring(6): null,
+			}
 		};
 	});
 
@@ -497,23 +499,22 @@ class SigaApi
 		const body = res.data.replace(/[\r\n\t]/g, '');
 
 		// encontrar descrição
-		const q = '<p id="descricao"><b>Descrição:</b>';
-		const s = body.indexOf(q);
-		if(s < 0)
+		const desc = /<b>Descrição:<\/b>(.*?)<\/p>/.exec(body);
+		if(!desc)
 		{
 			return {
 				errors: ['Descrição não encontrada']
 			};
 		}
 
-		const e = body.substring(s + q.length).indexOf('</p>');
-		const desc = body.substring(s + q.length, s + q.length + e);
+		const data = /Data de Assinatura\/Autenticação \:<\/b> (\d{2}\/\d{2}\/\d{2})/.exec(body);
 
 		return {
 			errors: null,
 			data: {
 				'Número': num,
-				'Descrição': desc.replace('Complemento do Assunto: ', '')
+				'Data': data? data[1].substring(0, 6) + '20' + data[1].substring(6): null,
+				'Descrição': desc[1].replace('Complemento do Assunto: ', '').trim()
 			}
 		};
 
