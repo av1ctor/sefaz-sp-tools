@@ -49,7 +49,14 @@ async function pesquisarDocs(q, opcoes)
             return null;
         }
         
-        return array2map(csv2json(res.data), ['Número', 'Usuário']);
+        return array2map(
+            csv2json(
+                res.data, 
+                ['Número', 'Data', 'Descrição', !opcoes.user2? 'Usuário': 'Usuário2']
+            ), 
+            ['Número', !opcoes.user2? 'Usuário': 'Usuário2'],
+            opcoes.user2? {to: 'Usuário', from: 'Usuário2'}: null
+        );
     }
     catch(err)
     {
@@ -87,7 +94,7 @@ async function listarProcessosEmPosseDaUnidade(
         "ultMovIdEstadoDoc": "0", //qualquer
     };
 
-    return pesquisarDocs(q, opcoes);
+    return pesquisarDocs(q, {...opcoes, user2: true});
 }
 
 async function listarExpedientesEmPosseDaUnidade(
@@ -103,7 +110,7 @@ async function listarExpedientesEmPosseDaUnidade(
         "ultMovIdEstadoDoc": "0", //qualquer
     };
 
-    return pesquisarDocs(q, opcoes);
+    return pesquisarDocs(q, {...opcoes, user2: true});
 }
 
 async function encontrarDocPai(filho)
@@ -364,11 +371,11 @@ function atualizarDoc(num, obj)
 
 function salvarDocs(docs)
 {
-    const stmt = db.prepare("INSERT INTO documentos (numero, usuario, data, descricao) VALUES (?,?,?,?) ON CONFLICT DO NOTHING");
+    const stmt = db.prepare("INSERT INTO documentos (numero, usuario, data, descricao) VALUES (?,?,?,?) ON CONFLICT(numero, usuario) DO UPDATE set usuario = ?");
     
     for(const doc of docs.values())
     {
-        stmt.run(doc['Número'], doc['Usuário'], doc['Data'], doc['Descrição'])
+        stmt.run(doc['Número'], doc['Usuário'], doc['Data'], doc['Descrição'], doc['Usuário'])
     }
     
     stmt.finalize();

@@ -63,10 +63,10 @@ async function main(args)
     pesquisarDocsDaUnidade(
         process.env.ORGAO_ID, 
         process.env.LOTA_ID, 
-        2020, 
+        2019, 
         00, 
-        2020, //new Date().getFullYear(), 
-        11, //new Date().getMonth(),
+        new Date().getFullYear(), 
+        new Date().getMonth(),
         options);
 }
 

@@ -13,7 +13,8 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\SigaStats\\index.js",
-            "args": ["--sem-titulo"]
+            "cwd": "${workspaceFolder}\\SigaStats"
+            //"args": ["--sem-titulo"]
         }
     ]
 }

@@ -50,7 +50,7 @@ function clearDups(arr)
 	return arr.map((item, index) => arr.indexOf(item) === index? item: item + '2');
 }
 
-function csv2json(text)
+function csv2json(text, keysToKeep = null)
 {
 	const res = [];
 
@@ -66,7 +66,9 @@ function csv2json(text)
 			res.push(
 				cols.reduce((obj, col, index) => ({
 					...obj, 
-					[keys[index]]: col.trim()
+					[keys[index]]: !keysToKeep || keysToKeep.indexOf(keys[index]) !== -1? 
+						col.trim():
+						undefined
 				}), 
 				{})
 			);
@@ -89,12 +91,21 @@ function objectsToCsv(objs)
     return iconv.encode(res, 'latin1');
 }
 
-function array2map(arr, keys)
+function array2map(arr, keys, keyToRename = null)
 {
 	return arr.reduce((map, item) => 
 	{
 		const key = keys.reduce((res, k) => res + (item[k] || ''), '');
-		map.set(key, item);
+		map.set(
+			key, 
+			!keyToRename?
+				item: 
+				{
+					...item, 
+					[keyToRename.to]: item[keyToRename.from],
+					[keyToRename.from]: undefined
+				});
+		
 		return map;
 	}, new Map());
 }
