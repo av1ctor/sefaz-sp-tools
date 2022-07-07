@@ -1,10 +1,12 @@
-const FormData = require('form-data');
-const nodeFetch = require('node-fetch');
-const fetch = require('fetch-cookie/node-fetch')(nodeFetch);
-const iconv = require('iconv-lite');
-const {sleep, memoize} = require('./Util');
+import {FormData} from 'formdata-node';
+import nodeFetch from 'node-fetch';
+import fetchCookie from 'fetch-cookie';
+import iconv from 'iconv-lite';
+import {sleep, memoize} from './Util.js';
 
-const ROOT_PATH = 'https://www.documentos.spsempapel.sp.gov.br';
+const fetch = fetchCookie(nodeFetch);
+
+const ROOT_PATH = 'https://documentos.spsempapel.sp.gov.br';
 const BASE_PATH = ROOT_PATH + '/sigaex/app/';
 const LOGIN_URL = ROOT_PATH + '/siga/public/app/login';
 const USER_URL  = ROOT_PATH + '/siga/api/v1/pessoas';
@@ -133,8 +135,8 @@ class SigaApi
 	async logon(username, password)
 	{
 		const data = new FormData();
-		data.append('username', username);
-		data.append('password', password);
+		data.set('username', username);
+		data.set('password', password);
 
 		const res = await this.requestURL('POST', LOGIN_URL, data, {responseType: CONTENT_TYPE_TEXT});
 		if(res.errors !== null)
@@ -181,14 +183,14 @@ class SigaApi
 		const buildFormData = (params) =>
 		{
 			const data = new FormData();
-			data.append('exibeLotacao', daLotacao.toString());
-			data.append('trazerAnotacoes', true.toString());
-			data.append('trazerComposto', false.toString());
-			data.append('trazerArquivados', false.toString());
-			data.append('trazerCancelados', false.toString());
-			data.append('ordemCrescenteData', true.toString());
-			data.append('idVisualizacao', idVisualizacao);
-			data.append('parms', JSON.stringify(params));
+			data.set('exibeLotacao', daLotacao.toString());
+			data.set('trazerAnotacoes', true.toString());
+			data.set('trazerComposto', false.toString());
+			data.set('trazerArquivados', false.toString());
+			data.set('trazerCancelados', false.toString());
+			data.set('ordemCrescenteData', true.toString());
+			data.set('idVisualizacao', idVisualizacao);
+			data.set('parms', JSON.stringify(params));
 			return data;
 		};
 
@@ -446,7 +448,7 @@ class SigaApi
 	{
 		const data = new FormData();
 		const query = Object.assign({}, findAllDocsTemplate, q);
-		Object.entries(query).forEach(([key, value]) => data.append(key, value));
+		Object.entries(query).forEach(([key, value]) => data.set(key, value));
 		const res = await this.post('expediente/doc/exportarCsv', data, {responseType: CONTENT_TYPE_RAW})
 		if(res.errors)
 		{
@@ -572,7 +574,7 @@ class SigaApi
 		
 		const data = new FormData();
 		const query = Object.assign({}, findAllUnitsTemplate, {idOrgaoUsu: org, "p.offset": offset, "paramoffset": offset});
-		Object.entries(query).forEach(([key, value]) => data.append(key, value));
+		Object.entries(query).forEach(([key, value]) => data.set(key, value));
 		const res = await this.post(ROOT_PATH + '/siga/app/lotacao/buscar', data, {responseType: CONTENT_TYPE_TEXT})
 		if(res.errors)
 		{
@@ -640,7 +642,7 @@ class SigaApi
 		
 		const data = new FormData();
 		const query = Object.assign({}, findAllUsersTemplate, {idOrgaoUsu: org, "p.offset": offset, "paramoffset": offset});
-		Object.entries(query).forEach(([key, value]) => data.append(key, value));
+		Object.entries(query).forEach(([key, value]) => data.set(key, value));
 		const res = await this.post(ROOT_PATH + '/siga/app/pessoa/buscar', data, {responseType: CONTENT_TYPE_TEXT})
 		if(res.errors)
 		{
@@ -775,4 +777,4 @@ class SigaApi
 	}
 }
 
-module.exports = SigaApi;
+export default SigaApi;

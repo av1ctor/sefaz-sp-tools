@@ -1,13 +1,13 @@
-const fs = require('fs');
-const cliProgress = require('cli-progress');
-const sqlite3 = require('sqlite3');
-const SigaApi = require('./libs/SigaApi');
-const {lastDayOfMonth, dateToString, csv2json, objectsToCsv, array2map} = require('./libs/Util');
+import fs from 'fs';
+import cliProgress from 'cli-progress';
+import sqlite3 from 'sqlite3';
+import SigaApi from './libs/SigaApi.js';
+import {lastDayOfMonth, dateToString, csv2json, objectsToCsv, array2map} from './libs/Util.js';
 
 const api = new SigaApi();
 const db = new sqlite3.Database('./siga.db');
 
-async function logon(user, pwd) 
+export async function logon(user, pwd) 
 {
     try
     {
@@ -69,7 +69,7 @@ async function listarDespachosAssinadosPelaUnidade(
     orgaoId, lotacaoId, anoInicial, mesInicial, anoFinal = null, mesFinal = null, opcoes)
 {
     const q = {
-        "dtDocString": dateToString(new Date(anoInicial, mesInicial, 01)),
+        "dtDocString": dateToString(new Date(anoInicial, mesInicial, 1)),
         "dtDocFinalString": dateToString(lastDayOfMonth(anoFinal || anoInicial, mesFinal || mesInicial)),
         "orgaoUsu": orgaoId,
         "lotaCadastranteSel.id": lotacaoId,
@@ -85,7 +85,7 @@ async function listarProcessosEmPosseDaUnidade(
     orgaoId, lotacaoId, anoInicial, mesInicial, anoFinal = null, mesFinal = null, opcoes)
 {
     const q = {
-        "dtDocString": dateToString(new Date(anoInicial, mesInicial, 01)),
+        "dtDocString": dateToString(new Date(anoInicial, mesInicial, 1)),
         "dtDocFinalString": dateToString(lastDayOfMonth(anoFinal || anoInicial, mesFinal || mesInicial)),
         "orgaoUsu": orgaoId,
         "ultMovLotaRespSel.id": lotacaoId,
@@ -101,7 +101,7 @@ async function listarExpedientesEmPosseDaUnidade(
     orgaoId, lotacaoId, anoInicial, mesInicial, anoFinal = null, mesFinal = null, opcoes)
 {
     const q = {
-        "dtDocString": dateToString(new Date(anoInicial, mesInicial, 01)),
+        "dtDocString": dateToString(new Date(anoInicial, mesInicial, 1)),
         "dtDocFinalString": dateToString(lastDayOfMonth(anoFinal || anoInicial, mesFinal || mesInicial)),
         "orgaoUsu": orgaoId,
         "ultMovLotaRespSel.id": lotacaoId,
@@ -293,7 +293,7 @@ async function listarDocsDaMesa()
     }
 }
 
-async function atualizarUnidades(orgao, offset)
+export async function atualizarUnidades(orgao, offset)
 {
     try
     {
@@ -328,7 +328,7 @@ async function atualizarUnidades(orgao, offset)
     }
 }
 
-async function atualizarUsuarios(orgao, offset)
+export async function atualizarUsuarios(orgao, offset)
 {
     try
     {
@@ -346,7 +346,7 @@ async function atualizarUsuarios(orgao, offset)
             console.log(`Encontrados ${res.data.length} usuários!`);
 
             console.log("Inserindo/atualizando usuários no DB...");
-            const stmt = db.prepare("INSERT INTO usuario(id, sigla, descricao) VALUES (?,?,?) ON DO NOTHING");
+            const stmt = db.prepare("INSERT INTO usuario(id, sigla, descricao) VALUES (?,?,?) ON CONFLICT DO NOTHING");
             res.data.forEach(item => stmt.run(item.id, item.sigla, item.nome));
             stmt.finalize();
             
@@ -381,7 +381,7 @@ function salvarDocs(docs)
     stmt.finalize();
 }
 
-async function pesquisarDocsDaUnidade(
+export async function pesquisarDocsDaUnidade(
     orgao, unidade, anoInicial, mesInicial, anoFinal, mesFinal, opcoes)
 {
     console.log("Pesquisando despachos...");
@@ -479,5 +479,3 @@ async function pesquisarDocsDaUnidade(
 
     console.log("Finalizado!");
 }
-
-module.exports = {logon, pesquisarDocsDaUnidade, atualizarUsuarios, atualizarUnidades};

@@ -1,6 +1,6 @@
-const iconv = require('iconv-lite');
+import iconv from 'iconv-lite';
 
-function sleep(ms) 
+export function sleep(ms) 
 {
 	return new Promise((resolve) => 
 	{
@@ -8,7 +8,7 @@ function sleep(ms)
 	});
   } 
 
-function memoize(method, options = {ttl: null}) 
+export function memoize(method, options = {ttl: null}) 
 {
 	const values = new Map();
 	const times = new Map();
@@ -33,12 +33,12 @@ function memoize(method, options = {ttl: null})
 	};
 }
 
-function lastDayOfMonth(year, month)
+export function lastDayOfMonth(year, month)
 {
 	return new Date(year, month + 1, 0);
 }
 
-function dateToString(date)
+export function dateToString(date)
 {
 	return ('0' + date.getDate()).slice(-2) + '/'
 		+ ('0' + (date.getMonth()+1)).slice(-2) + '/'
@@ -50,7 +50,7 @@ function clearDups(arr)
 	return arr.map((item, index) => arr.indexOf(item) === index? item: item + '2');
 }
 
-function csv2json(text, keysToKeep = null)
+export function csv2json(text, keysToKeep = null)
 {
 	const res = [];
 
@@ -78,7 +78,7 @@ function csv2json(text, keysToKeep = null)
 	return res;
 }
 
-function objectsToCsv(objs)
+export function objectsToCsv(objs)
 {
     let res = '';
     
@@ -91,7 +91,7 @@ function objectsToCsv(objs)
     return iconv.encode(res, 'latin1');
 }
 
-function array2map(arr, keys, keyToRename = null)
+export function array2map(arr, keys, keyToRename = null)
 {
 	return arr.reduce((map, item) => 
 	{
@@ -109,5 +109,3 @@ function array2map(arr, keys, keyToRename = null)
 		return map;
 	}, new Map());
 }
-
-module.exports = {sleep, memoize, lastDayOfMonth, dateToString, csv2json, objectsToCsv, array2map};

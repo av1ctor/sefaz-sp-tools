@@ -1,5 +1,6 @@
-require('dotenv').config();
-const {logon, pesquisarDocsDaUnidade, atualizarUsuarios, atualizarUnidades} = require('./App');
+import dotenv from 'dotenv';
+dotenv.config();
+import {logon, pesquisarDocsDaUnidade, atualizarUsuarios, atualizarUnidades} from './App.js';
 
 async function main(args)
 {
@@ -63,10 +64,10 @@ async function main(args)
     pesquisarDocsDaUnidade(
         process.env.ORGAO_ID, 
         process.env.LOTA_ID, 
-        2019, 
-        00, 
         new Date().getFullYear(), 
-        new Date().getMonth(),
+        (new Date().getMonth())-2, 
+        new Date().getFullYear(), 
+        new Date().getMonth()-1,
         options);
 }
 

@@ -1,0 +1,7 @@
+select
+    d.numero, d.data, u.sigla, u.nome, d.descricao
+    from documentos d
+    inner join usuarios u
+        on u.sigla = d.usuario
+    where d.pai is null
+    order by d.usuario asc;
