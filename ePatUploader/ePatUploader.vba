@@ -181,6 +181,12 @@ Public Sub carregarAiim()
     
     pauseUntilIeReady ieMain
     
+    Dim body As String
+    body = ieMain.Document.body.innerText
+    If InStr(1, body, "Não é possível acessar esta página") > 0 Then
+        Exit Sub
+    End If
+    
     '' aguardar usuário abrir o AIIM
     Set ie = Nothing
     Do
@@ -216,20 +222,19 @@ Public Sub selecionarArquivos()
         .Filters.Add "Arquivos PDF", "*.pdf"
 
         If .Show = True Then
-            rows("10:10000").EntireRow.Delete
+            limparArquivos
         
             Dim fPath As Variant
             Dim r As Integer
             r = 0
             For Each fPath In .SelectedItems
-                Cells(10 + r, 11).value = fPath
+                Cells(4 + r, 8).value = fPath
                 
                 Dim fname As String
                 fname = fso.GetFilename(fPath)
-                Range(Cells(10 + r, 2), Cells(10 + r, 7)).Merge
-                Cells(10 + r, 2).value = fname
-                Cells(10 + r, 2).Interior.Color = RGB(255, 255, 255)
-                Range(Cells(10 + r, 2), Cells(10 + r, 7)).BorderAround LineStyle:=xlContinuous, Weight:=xlMedium
+                Cells(4 + r, 6).value = fname
+                Cells(4 + r, 6).Interior.Color = RGB(255, 255, 255)
+                Cells(4 + r, 6).BorderAround LineStyle:=xlContinuous, Weight:=xlThin
                 
                 Dim f As Object
                 Set f = fso.GetFile(fPath)
@@ -242,11 +247,10 @@ Public Sub selecionarArquivos()
                     cor = RGB(255, 64, 64)
                 End If
                 
-                Range(Cells(10 + r, 8), Cells(10 + r, 10)).Merge
-                Cells(10 + r, 8).HorizontalAlignment = xlCenter
-                Cells(10 + r, 8).value = estado
-                Cells(10 + r, 8).Interior.Color = cor
-                Range(Cells(10 + r, 8), Cells(10 + r, 10)).BorderAround LineStyle:=xlContinuous, Weight:=xlMedium
+                Cells(4 + r, 7).HorizontalAlignment = xlCenter
+                Cells(4 + r, 7).value = estado
+                Cells(4 + r, 7).Interior.Color = cor
+                Cells(4 + r, 7).BorderAround LineStyle:=xlContinuous, Weight:=xlThin
                 
                 Set f = Nothing
                 r = r + 1
@@ -339,7 +343,7 @@ End Function
 
 Public Sub enviarArquivos()
     If ie Is Nothing Then
-        MsgBox "O AIIM não foi aberto corretamente no e-Pat. Refaça o passo 1"
+        MsgBox "O AIIM não foi aberto corretamente no e-Pat. Execute o passo 1"
         Exit Sub
     End If
     
@@ -347,24 +351,24 @@ Public Sub enviarArquivos()
     i = 0
     Do While i < 10000
         Dim state As String
-        state = Trim(Cells(10 + i, 8).value)
+        state = Trim(Cells(4 + i, 7).value)
         If Len(state) = 0 Then
             Exit Do
         ElseIf state = "Selecionado" Then
             Dim path As String
-            path = Cells(10 + i, 11).value
+            path = Cells(4 + i, 8).value
             Dim fname As String
-            fname = Cells(10 + i, 2).value
+            fname = Cells(4 + i, 6).value
             
-            Cells(10 + i, 8).value = "Enviando..."
-            Cells(10 + i, 8).Interior.Color = RGB(244, 177, 131)
+            Cells(4 + i, 7).value = "Enviando..."
+            Cells(4 + i, 7).Interior.Color = RGB(244, 177, 131)
             
             If enviarArquivo(path, fname) Then
-                Cells(10 + i, 8).value = "Inserido"
-                Cells(10 + i, 8).Interior.Color = RGB(64, 255, 192)
+                Cells(4 + i, 7).value = "Inserido"
+                Cells(4 + i, 7).Interior.Color = RGB(64, 255, 192)
             Else
-                Cells(10 + i, 8).value = "Envio falhou"
-                Cells(10 + i, 8).Interior.Color = RGB(255, 64, 64)
+                Cells(4 + i, 7).value = "Envio falhou"
+                Cells(4 + i, 7).Interior.Color = RGB(255, 64, 64)
             End If
         End If
         
@@ -373,13 +377,13 @@ Public Sub enviarArquivos()
 End Sub
 
 Public Sub limparArquivos()
-    rows("10:10000").EntireRow.Delete
+    Range("f4:h10000").Clear
 End Sub
 
 Public Sub protegerPlanilha()
-    ActiveSheet.Protect SENHA, UserInterfaceOnly:=True
+    Sheets(1).Protect SENHA, UserInterfaceOnly:=True
 End Sub
 
 Public Sub desprotegerPlanilha()
-    ActiveSheet.Unprotect SENHA, UserInterfaceOnly:=True
+    Sheets(1).Unprotect SENHA, UserInterfaceOnly:=True
 End Sub
