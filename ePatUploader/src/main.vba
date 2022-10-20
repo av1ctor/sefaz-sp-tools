@@ -1,3 +1,5 @@
+'' Copyright 2022 by André Vicentini (avtvicentini)
+
 Option Explicit
 
 #If VBA7 And Win64 Then

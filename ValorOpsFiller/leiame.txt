@@ -1,0 +1,16 @@
+Descrição: 
+	Robô/macro para preencher a tabela "Valor Total de Operações" no AIIM 2003
+
+Uso: 
+	1. Abra o arquivo no Excel 2013 ou superior
+	2. Preencha ou copie e cole os dados com os valores das operações
+	3. Clique em "Enviar" e aguarde o fim do processamento
+	
+Notas: 
+	1. O AIIM 2003 pode travar durante o preenchimento se o houver algum caracter inválido no arquivo de entrada, então salve primeiro os relatos!!!
+	2. O AIIM 2003 deve estar com a tela do Valor Total de Operações aberta
+	3. Aguarde a finalização para utilizar o mouse ou o teclado. O foco do mouse/teclado deve permanecer no AIIM 2003 até todo o término da operação
+
+A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
+
+Copyright 2022 by André Vicentini (avtvicentini)
