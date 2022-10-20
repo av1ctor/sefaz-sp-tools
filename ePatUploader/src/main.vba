@@ -32,9 +32,21 @@ Private Declare Function WideCharToMultiByte Lib "kernel32" ( _
 
 Private Const CP_UTF8 = 65001
 Private Const TAMANHO_MAXIMO = 8388608
-Private Const SENHA = "sefazsp1234"
+Private Const senhaDeProtecao = "sefazsp1234"
 
 Private ie As SHDocVw.InternetExplorer
+
+Private Sub IE_Sledgehammer()
+    Dim objWMI As Object, objProcess As Object, objProcesses As Object
+    Set objWMI = GetObject("winmgmts://.")
+    Set objProcesses = objWMI.ExecQuery( _
+        "SELECT * FROM Win32_Process WHERE Name = 'iexplore.exe'")
+    For Each objProcess In objProcesses
+        Call objProcess.Terminate
+    Next
+    Set objProcesses = Nothing: Set objWMI = Nothing
+End Sub
+
 
 Private Function readFile(ByVal path As String) As Byte()
     Dim num As Long
@@ -172,6 +184,8 @@ End Sub
 
 Public Sub carregarAiim()
     On Local Error GoTo handler
+    
+    IE_Sledgehammer
     
     '' carregar página inicial do e-pat
     Dim ieMain As InternetExplorerMedium
@@ -381,9 +395,9 @@ Public Sub limparArquivos()
 End Sub
 
 Public Sub protegerPlanilha()
-    Sheets(1).Protect SENHA, UserInterfaceOnly:=True
+    Sheets(1).Protect senhaDeProtecao, UserInterfaceOnly:=True
 End Sub
 
 Public Sub desprotegerPlanilha()
-    Sheets(1).Unprotect SENHA, UserInterfaceOnly:=True
+    Sheets(1).Unprotect senhaDeProtecao, UserInterfaceOnly:=True
 End Sub

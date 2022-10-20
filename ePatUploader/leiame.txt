@@ -12,7 +12,8 @@ Uso:
 
 Notas: 
 	1. Não utilize outra janela do Excel enquanto o processamento não estiver finalizado
-	2. Os arquivos PDF devem ter no máximo 8 MB de tamanho. A macro não faz a quebra dos arquivos. Utilize o https://pdfsam.org/pt/download-pdfsam-basic/ para dividir os arquivos em tamanhos menores primeiro
+	2. Não utilize outras janelas do Internet Explorer enquanto o processamento não estiver finalizado
+	3. Os arquivos PDF devem ter no máximo 8 MB de tamanho. A macro não faz a quebra dos arquivos. Utilize o https://pdfsam.org/pt/download-pdfsam-basic/ para dividir os arquivos em tamanhos menores primeiro
 	
 
 A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools

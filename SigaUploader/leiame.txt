@@ -1,0 +1,23 @@
+Descrição: 
+	Robô/macro para incluir documentos no SigaDoc/SemPapel automaticamente
+
+Uso: 
+	1. Abra o Internet Explorer (IE), clique no menu (botão com desenho de engrenagem no topo à direita), selecione "Opções da Internet", clique na aba "Segurança", desmarque "Habilitar Modo Protegido ...", aperte o botão OK e feche o IE
+	2. Abra o arquivo no Excel 2013 ou superior
+	3. Clique em "Fazer logon", preencha seu usuário no SigaDoc e sua senha, clique "OK" e aguarde finalizar
+	4. Clique em "Selecionar expediente", clique em "Carregar", selecione o expediente ao qual deseja inserir os documentos e clique "OK"
+	5. Clique em "Selecionar Arquivos" e selecione os documentos PDF que deseja enviar
+	6. Edite as colunas Assunto e Espécie de cada documento se necessário
+	7. Clique em "Enviar e Assinar" e aguarde o fim do processamento
+
+Notas: 
+	1. Não utilize outra janela do Excel enquanto o processamento não estiver finalizado
+	2. Não utilize outras janelas do Internet Explorer enquanto o processamento não estiver finalizado
+	3. Os arquivos PDF devem ter no máximo 10 MB de tamanho. A macro não faz a quebra dos arquivos. Utilize o https://pdfsam.org/pt/download-pdfsam-basic/ para dividir os arquivos em tamanhos menores primeiro
+	4. Para mudar os padrões de Assunto e Espécie usados, clique no botão com desenho de engrenagem e faça as alterações desejadas. Selecione novamente os arquivos para que os padrões sejam aplicados
+	5. Para limpar a lista de documentos, clique no botão com desenho de lixeira
+	
+
+A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
+
+Copyright 2022 by André Vicentini (avtvicentini)
