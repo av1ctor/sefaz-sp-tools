@@ -4,7 +4,9 @@ Descrição:
 Uso: 
 	1. Abra o arquivo no Excel 2013 ou superior
 	2. Preencha ou copie e cole os dados com os valores das operações
-	3. Clique em "Enviar" e aguarde o fim do processamento
+	3. Abra no AIIM 2003 o auto que deseja preencher
+	4. Abra e deixe aberta, no AIIM 2003, a janela "Valor Total de Operações e Serviços"
+	5. Volte no Excel e clique em "Enviar". Aguarde o fim do processamento
 	
 Notas: 
 	1. O AIIM 2003 pode travar durante o preenchimento se o houver algum caracter inválido no arquivo de entrada, então salve primeiro os relatos!!!
