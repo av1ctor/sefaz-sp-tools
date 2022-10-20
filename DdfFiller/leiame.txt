@@ -1,0 +1,37 @@
+Descrição: 
+	Robô/macro para preencher um DDF no AIIM 2003
+
+Uso: 
+	1. Abra o arquivo no Excel 2013 ou superior
+	2. Preencha ou copie & cole os dados com os valores do DDF
+	3. Abra no AIIM 2003 o auto que deseja preencher
+	4. Abra e mantenha assim, no AIIM 2003, a janela "Auto de Infração - Alterar" na aba "DDF"
+	5. Volte no Excel e clique em "Enviar". Aguarde o fim do processamento
+	
+Notas: 
+	1. O AIIM 2003 pode travar durante o preenchimento se o houver algum caracter inválido no arquivo de entrada, então salve primeiro os relatos!!!
+	2. O AIIM 2003 deve estar com a aba "DDF" aberta na tela "Auto de Infração - Alterar" 
+	3. Aguarde a finalização para utilizar o mouse ou o teclado. O foco do mouse/teclado deve permanecer no AIIM 2003 até todo o término da operação
+	4. As datas devem ser no formato: YYYY-MM, DD/MM/YYYY ou DD/MM/YY. Data no formato YYYY-MM será convertida para ultimo_dia_do_mes/MM/YY
+	5. Os valores podem conter cifrão (R$) e separador de milhares (.). O separador de decimal deve ser a vírgula (,)
+	6. Incisos e alíneas suportados atualmente:
+		I: 
+			a: tributo;dci;davb
+			b: tributo;dci;dij;davb
+			c: tributo;dci;dij;davb
+			l: tributo;dci;dij;davb
+		II: 
+			c: tributo;dci;dij;dcm;basico;davb
+		IV: 
+			a: dcm;basico;davb
+		V: 
+			a: dcm;basico;davb
+			c: dcm;basico;davb
+			m: dcm;basico;davb
+		VII: 
+			a: dcm;basico;davb ou <deixar linha em branco>
+
+
+A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
+
+Copyright 2022 by André Vicentini (avtvicentini)
