@@ -1,6 +1,6 @@
 # sefaz-sp-tools
 
-- [**EfdPrinter**](./tree/main/EfdPrinter): Gera, diretamente para PDF, os seguintes relatórios do "PVA EFD-ICMS-IPI" da RFB: LRE, LRS, LRAICMS, LRAICMS-ST, CIAP
+- [**EfdPrinter**](tree/main/EfdPrinter): Gera, diretamente para PDF, os seguintes relatórios do "PVA EFD-ICMS-IPI" da RFB: LRE, LRS, LRAICMS, LRAICMS-ST, CIAP
 - **DdfBot**: Robô/macro para preencher um DDF no AIIM 2003
 - **ValorOpsBot**: Robô/macro para preencher a tabela "Valor Total de Operações" no AIIM 2003
 - **ePatUploader**: Robô/macro para enviar documentos para fechamento de AIIM no e-Pat
