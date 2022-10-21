@@ -1,0 +1,95 @@
+versão 0.9.7 beta:
+- adicionado: opção -reusarDb para reusar o DB intermediário salvo anteriormente com -manterDb
+- adicionado: quando o número de linhas for maior que o limite do Excel, uma nova planilha (aba) será criada
+- corrigido: ordenação dos arquivos EFD
+- corrigido: documentos SAT sem destinatário definido estavam causando exceção
+
+versão 0.9.6 beta:
+- corrigido: registros analíticos do SAT não estavam sendo carregados 
+
+versão 0.9.5 beta:
+- alterado: quando os dados do DF-e são acrescentados (opção -complementarDados), a planilha gerada trará as linhas agrupadas (Excel somente) para facilitar a consulta
+- adicionado: será gerado PDF mesmo quando CIAP estiver vazio
+
+versão 0.9.4 beta:
+- corrigido: carregamento de xlsx (NFe_Destinatario_OSF, NFe_Emitente_OSF e CTe_CNPJ_Emitente_Tomador_Remetente_Destinatario_OSF)
+- alterado: ordenação das inconsistências agora é feita por valor de operação, do maior para o menor
+- alterado: reduzido o tamanho da janela da UI
+
+versão 0.9.3 beta:
+- adicionado: opção -formatoDeSaida access, para extração no formato MS Access 2007+ (.accdb)
+- adicionado: opção -formatoDeSaida sqlite, para extração no formato SQLite3 (abrir o .db gerado com https://sqlitestudio.pl/)
+- adicionado: relatório do CIAP em PDF
+- adicionado: observações do lançamento fiscal na LRE e LRS
+- adicionado: informações complementares no livro LRAICMS (ajustes e estornos)
+- adicionado: extração do registro E220 (ajuste de débito/crédito no LRAICMS-ST)
+- adicionado: opções -naoAnalisar e -naoResumir, para não gerar as planilhas de inconsistências e resumos, respectivamente
+- corrigido: ordenação dos registros cancelados e inutilizados estava incorreta no LRE
+- corrigido: vazamento de memória na geração de relatórios em PDF
+- melhorado: uso de memória reduzido para 1/3 da versão anterior no carregamento de EFD's
+
+versão 0.9.2 beta:
+- corrigido: vazamento de memória
+- corrigido: análises com limite estavam com a ordenação invertida
+- corrigido: arquivos csv do SAFI não estavam mais sendo carregados
+- corrigido: execução das análises agora reporta o tempo decorrido
+- adicionado: botão parar extração
+- adicionado: botão limpar formulário
+
+versão 0.9.1 beta:
+- adicionado: interface gráfica, mostrada quando nenhum parâmetro é passado na linha de comando
+- adicionado: novas análises do roteiro 3.01
+- adicionado: extração do bloco K (Estoque e produção, registros K100, K200 e K230)
+- adicionado: extração do registro E111 (ajuste de débito/crédito no LRAICMS)
+- alterado: quando uma planilha estiver vazia, ela não mais será gerada
+
+versão 0.9 beta:
+- corrigido: a ordenação do relatório da LRE não estava seguindo a da EFD-ICMS-IPI
+- corrigido: a razão social nos relatórios LRE e LRS estava sendo cortada (deveria criar uma linha dupla)
+- corrigido: os nomes com acentuação ou caracteres especiais latinos estavam sendo cortados nos relatórios
+- corrigido: colunas código, descrição e chave NF-e não estavam sendo gravadas na planilha CIAP
+- alterado: ao usar -filtrarCnpjs ou -filtrarChaves, as páginas de resumo não são mais geradas nos relatórios de LRE ou LRS
+- alterado: -naoGerarLre, -naoGerarLrs e -naoGerarLraicms deixam de gerar também as respectivas planilhas, além dos relatórios
+- adicionado: abas de resumos dos livros de entradas e saídas (agrupamentos por CFOP, CST e CST+CFOP)
+
+versão 0.8 beta:
+- alterado: a geração dos relatórios do PVA EFD-ICMS-IPI agora é feita diretamente em PDF. Com isso, os relatórios são gerados mais rapidamente e os arquivos são mais compactos, devido a não utilização do MS Word na conversão
+- corrigido: com a geração dos relatórios diretamente em PDF, agora o número das páginas é mantido, mesmo que as opções -filtrarCnpjs ou -filtrarChaves sejam usadas
+- adicionado: opção -realcar, para marcar, nos relatórios em PDF gerados, os registros que corresponderem às opções -filtrarCnpjs ou -filtrarChaves
+- DBs atualizados para a última versão (agosto-2020)
+
+versão 0.7 beta:
+- adicionado: opção -filtrarChaves chave1,chave2,...
+- corrigido: colunas CNPJ emitente e destinatário não estavam sendo formatadas para 14 dígitos ao carregar os relatórios em formato xlsx do Infoview BO
+- corrigido: planilha do relatório NFe_Destinatario_OSF do Infoview BO em formato xlsx não estava sendo carregada
+
+versão 0.6 beta:
+- adicionado: extração do bloco G (CIAP)
+- adicionado: extração de informações complementares (0450 e C110)
+- adicionado: carregamento do relatório NFE_Emitente_Itens_SP_OSF em formato csv
+- adicionado: opção '-formatoDeSaida null' para não criar planilha de saída
+- adicionado: coluna 'NCM' à tabela itensDfeSaida
+- corrigido: campo analítico C590 (NF Energia Elétrica/àgua/Gás) não estava sendo extraído
+
+versão 0.5 beta:
+- adicionado: o formato padrão de saída agora é xlsx do Excel 2003 ou superior
+- adicionado: os relatórios do novo Infoview BO, em formato xlsx, podem ser carregados diretamente, não sendo mais necessário utilizar os relatórios do SAFI em csv
+- adicionado: extração dos registros do SAT (C800 e C850)
+- corrigido: ao usar a opção -complementarDados, registros de NF-e que contivessem tanto itens (C170), como itens analíticos (C190), estavam sendo extraídos em dobro
+
+versão 0.4 beta:
+- adicionado suporte ao layout 112 (para EFDs a partir de janeiro-2019)
+
+versão 0.3 beta:
+- DBs atualizados para a última versão (março-2019)
+- scripts de análise estão mais fáceis de ler e agora retornam uma exceção se ocorrer algum erro na execução
+- novas análises implementadas (ver TODO.txt)
+- aba Saídas na planilha agora lista cada item do LRS, um para cada CFOP do documento fiscal
+- nova opção -dbEmDisco, que gravará os dados intermediários em disco, poupando memória (use -manterDB para preservar o arquivo em formato SQLite)
+- nova opção -formatoDeSaida xml|csv para mudar o formato da planilha gerada
+
+versão 0.2 beta:
+- adicionado: extração do bloco H (Livro de Inventário)
+- corrigido: ordenação das datas no relatório Word/docx agora segue a ordem do EFD-ICMS-IPI
+- melhoria: aplicativo foi portado para 64-bit, permitindo extrair e processar EFDs de mais de 500MB de tamanho
+- melhoria: extração de EFDs grandes (> 100MB) ficou muito mais rápida com novo algoritmo de ordenação

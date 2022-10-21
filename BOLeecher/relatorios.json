@@ -1,0 +1,596 @@
+﻿[
+	{
+		"nome": "NFe_Emitente_OSF",
+		"id": "210366",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "Situação",
+				"descricao": "0=Normal, 1=Cancelada, 2=Denegada",
+				"tipo": "Numerico",
+				"valor": "0"
+			},
+			{
+				"key": "5",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFe_Emitente_Itens_OSF",
+		"id": "2351620",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "Situação",
+				"descricao": "0=Normal, 1=Cancelada, 2=Denegada",
+				"tipo": "Numerico",
+				"valor": "0"
+			},
+			{
+				"key": "5",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFe_Destinatario_OSF",
+		"id": "2351634",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "Situação",
+				"descricao": "0=Normal, 1=Cancelada, 2=Denegada",
+				"tipo": "Numerico",
+				"valor": "0"
+			},
+			{
+				"key": "5",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFe_Destinatario_Itens_OSF",
+		"id": "2351649",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "Situação",
+				"descricao": "0=Normal, 1=Cancelada, 2=Denegada",
+				"tipo": "Numerico",
+				"valor": "0"
+			},
+			{
+				"key": "5",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "CTe_CNPJ_Emitente_Tomador_Remetente_Destinatario_OSF",
+		"descricao": "CT-e por CNPJ emitente, tomador, remetente ou destinatário",
+		"id": "212848",
+		"particionavel": true,
+		"quebra": "Nenhum",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "Situação",
+				"descricao": "0=Normal, 1=Cancelada, 2=Denegada",
+				"tipo": "Numerico",
+				"valor": "0"
+			},
+			{
+				"key": "5",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "SAT - CuponsEmitidosPorContribuinteCNPJ_OSF",
+		"descricao": "Apresenta os totais de cada CF-e-SAT emitido utilizando como critérios de pesquisa uma data inicial e final mais o CNPJ do contribuinte. Disponibiliza, também, uma tabela de referencia cruzada com os totais por números de série de SAT, e outra em que são apresentados os totais diários",
+		"id": "212942",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "SAT - ItensDeCuponsCNPJ_OSF",
+		"descricao": "Apresenta as informações detalhadas de cada CF-e-SAT, a nível de item, utilizando como critérios de pesquisa uma data inicial e final mais a IE do contribuinte. Disponibiliza, também, uma tabela de referencia cruzada em que os totais são apresentados considerando o CST e a alíquota de ICMS aplicada",
+		"id": "212945",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "2",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "4",
+				"nome": "OSF",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "DANFE Unificado – Lista de Chaves de Acesso",
+		"id": "435320",
+		"particionavel": false,
+		"quebra": "Nenhum",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Chaves de Acesso da NFe",
+				"descricao": "Separadas por ;",
+				"tipo": "Texto",
+				"multiplo": true,
+				"separador": ";"
+			}
+		]
+	},
+	{
+		"nome": "NFE-SP",
+		"id": "864675",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFE-SP-Detalhe",
+		"id": "864681",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFE-Eventos_SP",
+		"id": "872825",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFE-Outras_UFs",
+		"id": "864685",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFE-Outras_UFs-Detalhe",
+		"id": "864688",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "NFE-Eventos_Outras_UFs",
+		"id": "872849",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "CTE",
+		"id": "856348",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "CTE-eventos",
+		"id": "1685902",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "SAT-Cfe",
+		"id": "856366",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "SAT-CFe_Itens",
+		"id": "856373",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+			{
+				"key": "1",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "2",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "dd/MM/yyyy"
+			},
+			{
+				"key": "3",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			}
+		]
+	},
+	{
+		"nome": "EFD_Entradas",
+		"id": "1911290",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+		
+			{
+				"key": "1",
+				"nome": "Tipo de consulta",
+				"descricao": "1 - por CNPJ Base / 2 - por CNPJ completo",
+				"tipo": "Numerico",
+				"valor": "2"
+			},
+			{
+				"key": "2",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "3",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "4",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "5",
+				"nome": "Somente última EFD entregue",
+				"descricao": "S/N",
+				"tipo": "Texto",
+				"valor": "S"
+			}
+		]
+	},
+	{
+		"nome": "EFD_Saidas",
+		"id": "1911304",
+		"particionavel": true,
+		"quebra": "Anual",
+		"parametros": [
+		
+			{
+				"key": "1",
+				"nome": "Tipo de consulta",
+				"descricao": "1 - por CNPJ Base / 2 - por CNPJ completo",
+				"tipo": "Numerico",
+				"valor": "2"
+			},
+			{
+				"key": "2",
+				"nome": "CNPJ",
+				"tipo": "Numerico"
+			},
+			{
+				"key": "3",
+				"nome": "Data Inicial",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "4",
+				"nome": "Data Final",
+				"tipo": "Data",
+				"formato": "yyyyMM"
+			},
+			{
+				"key": "5",
+				"nome": "Somente última EFD entregue",
+				"descricao": "S/N",
+				"tipo": "Texto",
+				"valor": "S"
+			}
+		]
+	}
+]

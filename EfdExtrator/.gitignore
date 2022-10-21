@@ -1,0 +1,11 @@
+/DB/
+/testes/
+*.dll
+*.a
+*.o
+*.pdf
+*.csv
+*.exe
+analises.lua
+TODO.txt
+leiame.txt
