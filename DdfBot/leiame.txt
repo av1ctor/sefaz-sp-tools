@@ -14,14 +14,32 @@ Notas:
 	3. Aguarde a finalização para utilizar o mouse ou o teclado. O foco do mouse/teclado deve permanecer no AIIM 2003 até todo o término da operação
 	4. As datas devem ser no formato: YYYY-MM, DD/MM/YYYY ou DD/MM/YY. Data no formato YYYY-MM será convertida para ultimo_dia_do_mes/MM/YY
 	5. Os valores podem conter cifrão (R$) e separador de milhares (.). O separador de decimal deve ser a vírgula (,)
-	6. Incisos e alíneas suportados atualmente:
+	6. Para incluir novos incisos e/ou alíneas, basta editar a planilha "config". Para exibi-la, clique com o direito na aba "ddfBot" e selecione "Re-exibir..." e clique no botão "OK". Edite as tabelas "Incisos" e "Alíneas", incluindo as colunas que serão preenchidas no AIIM 2003
+	7. Incisos e alíneas suportados atualmente:
 		I: 
 			a: tributo;dci;davb
 			b: tributo;dci;dij;davb
 			c: tributo;dci;dij;davb
+			d: tributo;dci;dij;dcm;davb
+			e: tributo;dci;davb
+			f: tributo;dci;dij;davb
+			g: tributo;dci;dij;davb
+			h: tributo;dci;dij;basico;davb
+			i: tributo;dci;dij;basico;davb
+			j: tributo;dci;dij;davb
 			l: tributo;dci;dij;davb
+			m: tributo;dij;dfg
+			n: tributo;dij;dfg
 		II: 
+			b: tributo;dci;dij;dcm;basico;davb
 			c: tributo;dci;dij;dcm;basico;davb
+			d: tributo;dci;dij;dcm;basico;davb
+			e: tributo;dci;dcm;basico;davb
+			f: tributo;dci;dij;dcm;basico;davb
+			g: tributo;dci;dij;dcm;basico;davb
+			h: tributo;dci;dij;basico;davb
+			i: tributo;dci;dij;basico;davb
+			j: tributo;dci;dij;dcm;basico;davb
 		IV: 
 			a: dcm;basico;davb
 		V: 
@@ -30,7 +48,6 @@ Notas:
 			m: dcm;basico;davb
 		VII: 
 			a: dcm;basico;davb ou <deixar linha em branco>
-
 
 A versão mais recente pode ser encontrada em: https://github.com/av1ctor/sefaz-sp-tools
 

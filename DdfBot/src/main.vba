@@ -43,11 +43,11 @@ End Type
 Private Const senhaDeProtecao = "sefazsp1234"
 
 Private hWndMain As LongPtr
-Private colunas() As String
-Private inciso As String
-Private alinea As String
 
-Private Sub attachToWindow(ByVal hWnd As LongPtr, ByVal doAttach As Boolean)
+Private Sub attachToWindow( _
+    ByVal hWnd As LongPtr, _
+    ByVal doAttach As Boolean _
+)
     Dim myThread As LongPtr
     Static newThread As LongPtr
     Static curThread As LongPtr
@@ -75,7 +75,10 @@ Private Sub attachToWindow(ByVal hWnd As LongPtr, ByVal doAttach As Boolean)
 
 End Sub
 
-Private Sub controlSend(ByVal hWnd As LongPtr, keys As String)
+Private Sub controlSend( _
+    ByVal hWnd As LongPtr, _
+    keys As String _
+)
     attachToWindow hWnd, True
     
     SendKeys keys, True
@@ -83,7 +86,10 @@ Private Sub controlSend(ByVal hWnd As LongPtr, keys As String)
     attachToWindow hWnd, False
 End Sub
 
-Private Sub utilAttachThreadInput(ByVal hWnd As LongPtr, doAttach As Boolean)
+Private Sub utilAttachThreadInput( _
+    ByVal hWnd As LongPtr, _
+    doAttach As Boolean _
+)
     
     Dim res As Long
     res = AttachThreadInput(GetCurrentThreadId(), GetWindowThreadProcessId(hWnd, 0), IIf(doAttach = True, 1, 0))
@@ -102,7 +108,11 @@ Private Sub controlFocus(ByVal hWnd As LongPtr, class As String, ByVal instance 
     utilAttachThreadInput hWndMain, False
 End Sub
 
-Private Function controlFind(ByVal hWnd As LongPtr, class As String, ByVal instance As Integer) As LongPtr
+Private Function controlFind( _
+    ByVal hWnd As LongPtr, _
+    class As String, _
+    ByVal instance As Integer _
+) As LongPtr
     Dim params As SearchParams
     params.class = class
     params.instance = instance
@@ -116,7 +126,10 @@ Private Function controlFind(ByVal hWnd As LongPtr, class As String, ByVal insta
     controlFind = params.hWnd
 End Function
 
-Private Function controlFindCB(ByVal hWnd As LongPtr, ByRef params As SearchParams) As Long
+Private Function controlFindCB( _
+    ByVal hWnd As LongPtr, _
+    ByRef params As SearchParams _
+) As Long
     Dim buff As String * 256
     Dim retVal As Long
     
@@ -135,7 +148,11 @@ Private Function controlFindCB(ByVal hWnd As LongPtr, ByRef params As SearchPara
     controlFindCB = 1
 End Function
 
-Private Function windowFind(ByVal hWnd As LongPtr, class As String, title As String) As LongPtr
+Private Function windowFind( _
+    ByVal hWnd As LongPtr, _
+    class As String, _
+    title As String _
+) As LongPtr
     Dim params As SearchParams
     params.class = class
     params.title = title
@@ -149,26 +166,34 @@ Private Function windowFind(ByVal hWnd As LongPtr, class As String, title As Str
     windowFind = params.hWnd
 End Function
 
-Private Function windowFindWaiting(ByVal hWnd As LongPtr, class As String, title As String, ByVal seconds As Integer) As LongPtr
+Private Function windowFindWaiting( _
+    ByVal hWnd As LongPtr, _
+    class As String, _
+    title As String, _
+    ByVal seconds As Integer _
+) As LongPtr
     Dim elapsed As Integer
     elapsed = 0
     
-    Do While elapsed < seconds
+    Do While elapsed < seconds * 10
         Dim child As LongPtr
         child = windowFind(hWnd, class, title)
         If child <> 0 Then
             windowFindWaiting = child
             Exit Function
         End If
-        Sleep 1000
-        elapsed = elapsed + 1
+        Sleep 100
+        elapsed = elapsed + 10
     Loop
     
     windowFindWaiting = 0
     
 End Function
 
-Private Function windowFindCB(ByVal hWnd As LongPtr, ByRef params As SearchParams) As Long
+Private Function windowFindCB( _
+    ByVal hWnd As LongPtr, _
+    ByRef params As SearchParams _
+) As Long
     Dim buff As String * 1024
     Dim retVal As Long
     
@@ -190,12 +215,21 @@ Private Function windowFindCB(ByVal hWnd As LongPtr, ByRef params As SearchParam
     windowFindCB = 1
 End Function
 
-Private Sub controlClick(ByVal hWnd As LongPtr, class As String, ByVal instance As Integer)
+Private Sub controlClick( _
+    ByVal hWnd As LongPtr, _
+    class As String, _
+    ByVal instance As Integer _
+)
     controlFocus hWnd, class, instance
     controlSend hWnd, "{ENTER}"
 End Sub
 
-Private Sub focusAndSend(ByVal hWnd As LongPtr, class As String, ByVal instance As Integer, keys As String)
+Private Sub focusAndSend( _
+    ByVal hWnd As LongPtr, _
+    class As String, _
+    ByVal instance As Integer, _
+    keys As String _
+)
     controlFocus hWnd, class, instance
     Dim key As Variant
     For Each key In Split(keys, "|")
@@ -204,9 +238,16 @@ Private Sub focusAndSend(ByVal hWnd As LongPtr, class As String, ByVal instance 
     Sleep 10
 End Sub
 
-Private Sub waitDialogAndClick(hWnd As LongPtr, class As String, title As String, buttonClass As String, ByVal buttonInstance As Integer)
+Private Sub waitDialogAndClick( _
+    hWnd As LongPtr, _
+    class As String, _
+    title As String, _
+    buttonClass As String, _
+    ByVal buttonInstance As Integer, _
+    ByVal seconds As Integer _
+)
     Dim hWndDlg As LongPtr
-    hWndDlg = windowFindWaiting(hWnd, class, title, 10)
+    hWndDlg = windowFindWaiting(hWnd, class, title, seconds)
     If hWndDlg = 0 Then
         Exit Sub
     End If
@@ -256,198 +297,67 @@ Private Function repeatString(ByVal text As String, ByVal number As Integer) As 
     Loop
 End Function
 
-Private Sub preencherDDF_Ia(ByVal hWnd As LongPtr, linha() As String)
-    Dim tributo As String
-    Dim dci As String
-    Dim davb As String
-    tributo = formatarDecimal(Trim(linha(0)))
-    dci = formatarData(Trim(linha(1)))
-    davb = formatarData(Trim(linha(2)))
-
-    ' tributo
-    focusAndSend hWnd, "ThunderRT6TextBox", 13, tributo
-    ' DCI
-    focusAndSend hWnd, "MSMaskWndClass", 2, dci
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherTributo(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "ThunderRT6TextBox", 13, formatarDecimal(valor)
 End Sub
 
-Private Sub preencherDDF_Ib(ByVal hWnd As LongPtr, linha() As String)
-    Dim tributo As String
-    tributo = formatarDecimal(Trim(linha(0)))
-    Dim dci As String
-    dci = formatarData(Trim(linha(1)))
-    Dim dij As String
-    dij = formatarData(Trim(linha(2)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(3)))
-
-    ' tributo
-    focusAndSend hWnd, "ThunderRT6TextBox", 13, tributo
-    ' DCI
-    focusAndSend hWnd, "MSMaskWndClass", 2, dci
-    ' DIJ
-    focusAndSend hWnd, "MSMaskWndClass", 3, dij & "{TAB}"
-    '
-    Sleep 100
-    waitDialogAndClick 0, "#32770", "AIIM2003", "Button", 1
-    Sleep 100
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherDci(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "MSMaskWndClass", 2, formatarData(valor)
 End Sub
 
-Private Sub preencherDDF_Ic(ByVal hWnd As LongPtr, linha() As String)
-    Dim tributo As String
-    tributo = formatarDecimal(Trim(linha(0)))
-    Dim dci As String
-    dci = formatarData(Trim(linha(1)))
-    Dim dij As String
-    dij = formatarData(Trim(linha(2)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(3)))
-
-    ' tributo
-    focusAndSend hWnd, "ThunderRT6TextBox", 13, tributo
-    ' DCI
-    focusAndSend hWnd, "MSMaskWndClass", 2, dci
-    ' DIJ
-    focusAndSend hWnd, "MSMaskWndClass", 3, dij & "{TAB}"
-    '
-    waitDialogAndClick hWnd, "#32770", "AIIM2003", "Button", 1
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherDij(ByVal hWnd As LongPtr, valor As String, checkDlg As Boolean)
+    focusAndSend hWnd, "MSMaskWndClass", 3, formatarData(valor) & "{TAB}"
+    If checkDlg Then
+        waitDialogAndClick 0, "#32770", "AIIM2003", "Button", 1, 3
+    End If
 End Sub
 
-Private Sub preencherDDF_Il(ByVal hWnd As LongPtr, linha() As String)
-    Dim tributo As String
-    tributo = formatarDecimal(Trim(linha(0)))
-    Dim dci As String
-    dci = formatarData(Trim(linha(1)))
-    Dim dij As String
-    dij = formatarData(Trim(linha(2)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(3)))
-
-    ' tributo
-    focusAndSend hWnd, "ThunderRT6TextBox", 13, tributo
-    ' DCI
-    focusAndSend hWnd, "MSMaskWndClass", 2, dci
-    ' DIJ
-    focusAndSend hWnd, "MSMaskWndClass", 3, dij & "{TAB}"
-    '
-    waitDialogAndClick hWnd, "#32770", "AIIM2003", "Button", 1
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherDcm(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "MSMaskWndClass", 1, formatarData(valor)
 End Sub
 
-Private Sub preencherDDF_IIc(ByVal hWnd As LongPtr, linha() As String)
-    Dim tributo As String
-    tributo = formatarDecimal(Trim(linha(0)))
-    Dim dci As String
-    dci = formatarData(Trim(linha(1)))
-    Dim dij As String
-    dij = formatarData(Trim(linha(2)))
-    Dim dcm As String
-    dcm = formatarData(Trim(linha(3)))
-    Dim basico As String
-    basico = formatarDecimal(Trim(linha(4)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(5)))
-
-    ' tributo
-    focusAndSend hWnd, "ThunderRT6TextBox", 13, tributo
-    ' DCI
-    focusAndSend hWnd, "MSMaskWndClass", 2, dci
-    ' DIJ
-    focusAndSend hWnd, "MSMaskWndClass", 3, dij
-    ' DCM
-    focusAndSend hWnd, "MSMaskWndClass", 1, dcm
-    ' valor básico
-    focusAndSend hWnd, "ThunderRT6TextBox", 14, basico
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherBasico(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "ThunderRT6TextBox", 14, formatarDecimal(valor)
 End Sub
 
-Private Sub preencherDDF_IVa(ByVal hWnd As LongPtr, linha() As String)
-    Dim dcm As String
-    dcm = formatarData(Trim(linha(0)))
-    Dim basico As String
-    basico = formatarDecimal(Trim(linha(1)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(2)))
-
-    ' DCM
-    focusAndSend hWnd, "MSMaskWndClass", 1, dcm
-    ' valor básico
-    focusAndSend hWnd, "ThunderRT6TextBox", 14, basico
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherDavb(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "MSMaskWndClass", 4, formatarData(valor)
 End Sub
 
-Private Sub preencherDDF_Va(ByVal hWnd As LongPtr, linha() As String)
-    Dim dcm As String
-    dcm = formatarData(Trim(linha(0)))
-    Dim basico As String
-    basico = formatarDecimal(Trim(linha(1)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(2)))
-
-    ' DCM
-    focusAndSend hWnd, "MSMaskWndClass", 1, dcm
-    ' valor básico
-    focusAndSend hWnd, "ThunderRT6TextBox", 14, basico
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherDfg(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "MSMaskWndClass", 5, formatarData(valor)
 End Sub
 
-Private Sub preencherDDF_Vc(ByVal hWnd As LongPtr, linha() As String)
-    Dim dcm As String
-    dcm = formatarData(Trim(linha(0)))
-    Dim basico As String
-    basico = formatarDecimal(Trim(linha(1)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(2)))
-
-    ' DCM
-    focusAndSend hWnd, "MSMaskWndClass", 1, dcm
-    ' valor básico
-    focusAndSend hWnd, "ThunderRT6TextBox", 14, basico
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
-End Sub
-
-Private Sub preencherDDF_Vm(ByVal hWnd As LongPtr, linha() As String)
-    Dim dcm As String
-    dcm = formatarData(Trim(linha(0)))
-    Dim basico As String
-    basico = formatarDecimal(Trim(linha(1)))
-    Dim davb As String
-    davb = formatarData(Trim(linha(2)))
-
-    ' DCM
-    focusAndSend hWnd, "MSMaskWndClass", 1, dcm
-    ' valor básico
-    focusAndSend hWnd, "ThunderRT6TextBox", 14, basico
-    ' DAVB
-    focusAndSend hWnd, "MSMaskWndClass", 4, davb
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+Private Sub preencherDDF( _
+    ByVal hWnd As LongPtr, _
+    inciso As String, _
+    colunas() As String, _
+    linha() As String _
+)
+    Dim i As Integer
+    For i = 0 To UBound(colunas)
+        Dim valor As String
+        valor = linha(i)
+        
+        Select Case colunas(i)
+        Case "tributo"
+            preencherTributo hWnd, valor
+        Case "dci"
+            preencherDci hWnd, valor
+        Case "dij"
+            preencherDij hWnd, valor, inciso = "I"
+        Case "dij-nc"
+            preencherDij hWnd, valor, False
+        Case "dcm"
+            preencherDcm hWnd, valor
+        Case "basico"
+            preencherBasico hWnd, valor
+        Case "davb"
+            preencherDavb hWnd, valor
+        Case "dfg"
+            preencherDfg hWnd, valor
+        End Select
+    Next
 End Sub
 
 Private Sub preencherDDF_VIIa(ByVal hWnd As LongPtr, linha() As String)
@@ -457,62 +367,27 @@ Private Sub preencherDDF_VIIa(ByVal hWnd As LongPtr, linha() As String)
     focusAndSend hWnd, "ThunderRT6ComboBox", 5, IIf(l > 0, "{HOME}", "{HOME}{DOWN}{DOWN}{DOWN}")
     Sleep 300
     If l > 0 Then
-        Dim dcm As String
-        dcm = formatarData(Trim(linha(0)))
-        Dim basico As String
-        basico = formatarDecimal(Trim(linha(1)))
-        Dim davb As String
-        davb = formatarData(Trim(linha(2)))
-
-        ' DCM
-        focusAndSend hWnd, "MSMaskWndClass", 1, dcm
-        ' valor básico
-        focusAndSend hWnd, "ThunderRT6TextBox", 14, basico
-        ' DAVB
-        focusAndSend hWnd, "MSMaskWndClass", 4, davb
+        preencherDcm hWnd, linha(0)
+        preencherBasico hWnd, linha(1)
+        preencherDavb hWnd, linha(2)
     End If
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
 End Sub
 
-Private Sub enviarLinha(ByVal hWnd As LongPtr, linha() As String)
-    Select Case UCase(inciso)
-    Case "I"
-        Select Case UCase(alinea)
-        Case "A"
-            preencherDDF_Ia hWnd, linha
-        Case "B"
-            preencherDDF_Ib hWnd, linha
-        Case "C"
-            preencherDDF_Ic hWnd, linha
-        Case "L"
-            preencherDDF_Il hWnd, linha
-        End Select
-    Case "II"
-        Select Case UCase(alinea)
-        Case "C"
-            preencherDDF_IIc hWnd, linha
-        End Select
-    Case "IV"
-        Select Case UCase(alinea)
-        Case "A"
-            preencherDDF_IVa hWnd, linha
-        End Select
-    Case "V"
-        Select Case UCase(alinea)
-        Case "A"
-            preencherDDF_Va hWnd, linha
-        Case "C"
-            preencherDDF_Vc hWnd, linha
-        Case "M"
-            preencherDDF_Vm hWnd, linha
-        End Select
-    Case "VII"
-        Select Case UCase(alinea)
-        Case "A"
-            preencherDDF_VIIa hWnd, linha
-        End Select
+Private Sub enviarLinha( _
+    ByVal hWnd As LongPtr, _
+    inciso As String, _
+    alinea As String, _
+    colunas() As String, _
+    linha() As String _
+)
+    Select Case UCase(inciso) & "-" & UCase(alinea)
+    Case "VII-A"
+        preencherDDF_VIIa hWnd, linha
+    Case Else
+        preencherDDF hWnd, inciso, colunas, linha
     End Select
+    ' incluir
+    controlClick hWnd, "ThunderRT6CommandButton", 11
 End Sub
 
 Public Sub enviarValores()
@@ -529,7 +404,13 @@ Public Sub enviarValores()
         Exit Sub
     End If
     
-    prepararColunas
+    Dim inciso As String
+    inciso = ActiveSheet.Cells(4, 3).value
+    Dim alinea As String
+    alinea = ActiveSheet.Cells(5, 3).value
+    
+    Dim colunas() As String
+    colunas = carregarColunas(inciso, alinea)
 
     Dim totalCols As Integer
     totalCols = UBound(colunas) + 1
@@ -549,17 +430,17 @@ Public Sub enviarValores()
             linha(c) = Trim(Cells(4 + r, 6 + c).value)
         Next
         
-        enviarLinha hWnd, linha()
+        enviarLinha hWnd, inciso, alinea, colunas(), linha()
         
         Sleep 1000
     Next
 
 End Sub
 
-Public Sub prepararColunas()
-    inciso = ActiveSheet.Cells(4, 3).value
-    alinea = ActiveSheet.Cells(5, 3).value
-    
+Private Function carregarColunas( _
+    inciso As String, _
+    alinea As String _
+) As String()
     With Sheets("config")
         Dim r As Integer
         For r = 0 To 255
@@ -571,20 +452,33 @@ Public Sub prepararColunas()
                 Dim alin As String
                 alin = Trim(.Cells(3 + r, 4).value)
                 If alin = alinea Then
-                    colunas = Split(Trim(.Cells(3 + r, 5).value), ";")
-                    Dim coluna As Variant
-                    Dim c As Integer
-                    c = 0
-                    For Each coluna In colunas
-                        ActiveSheet.Cells(3, 6 + c).value = CStr(coluna)
-                        c = c + 1
-                    Next
-                    Exit For
+                    carregarColunas = Split(Trim(.Cells(3 + r, 5).value), ";")
+                    Exit Function
                 End If
             End If
         Next
-        
     End With
+    
+    carregarColunas = Split("", ";")
+    
+End Function
+
+Public Sub prepararColunas()
+    Dim inciso As String
+    inciso = ActiveSheet.Cells(4, 3).value
+    Dim alinea As String
+    alinea = ActiveSheet.Cells(5, 3).value
+    
+    Dim colunas() As String
+    colunas = carregarColunas(inciso, alinea)
+    Dim coluna As Variant
+    Dim c As Integer
+    c = 0
+    For Each coluna In colunas
+        ActiveSheet.Cells(3, 6 + c).value = Replace(CStr(coluna), "-nc", "")
+        c = c + 1
+    Next
+                    
 End Sub
 
 Public Sub limparDados()
