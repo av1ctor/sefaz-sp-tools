@@ -1,11 +1,15 @@
 # sefaz-sp-tools
 
+- **EfdPrinter**: Gera, diretamente para PDF, os seguintes relatórios do "PVA EFD-ICMS-IPI" da RFB: LRE, LRS, LRAICMS, LRAICMS-ST, CIAP
 - **DdfBot**: Robô/macro para preencher um DDF no AIIM 2003
 - **ValorOpsBot**: Robô/macro para preencher a tabela "Valor Total de Operações" no AIIM 2003
 - **ePatUploader**: Robô/macro para enviar documentos para fechamento de AIIM no e-Pat
 - **SigaUploader**: Robô/macro para incluir documentos no SigaDoc/SP-SemPapel automaticamente
 - **CSV2DDF**: preenche um DDF no AIIM 2003 a partir de um arquivo csv
 - **CSV2OPS**: preenche a tabela Valor Total de Operações no AIIM 2003 a partir de um arquivo csv
+
+# **EfdPrinter**  
+![alt text](./telas/07.png?raw=true)
 
 # **DdfBot**  
 ![alt text](./telas/06.png?raw=true)
