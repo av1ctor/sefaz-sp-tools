@@ -912,7 +912,7 @@ function EfdGUI.buildDlg(efdFrm as IHandle ptr) as IHandle ptr
 	
 	IupSetAttributeHandle(dlg, "MENU", buildMenu())
 	
-	IupSetAttribute(dlg, "TITLE", "EfdExtrator")
+	IupSetAttribute(dlg, "TITLE", "EfdPrinter")
 	IupSetAttribute(dlg, "MARGIN", "2x2")
 	var h = 800
 	IupSetAttribute(dlg, "RASTERSIZE", "1000x" & h)
