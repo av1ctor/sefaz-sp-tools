@@ -1,0 +1,60 @@
+Descrição:
+   EFdPrinter - Gera, diretamente para PDF, os seguintes relatórios do "PVA EFD-ICMS-IPI" da RFB:
+        1. LRE
+        2. LRS
+        3. LRAICMS
+        4. LRAICMS-ST
+        5. CIAP
+        
+Modo de usar (linha de comando):
+
+    EfdPrinter.exe Opções nome-do-arquivo.txt
+    
+    Notas:
+	1. Se nada for passado na linha de comando, a versão gráfica (GUI) será iniciada
+        2. No lugar do nome dos arquivos, podem ser usadas máscaras, como por exemplo: *.txt
+    
+    Opções:
+        -ajuda
+         Mostra esta tela de ajuda
+         
+        -filtrarCnpjs cnpj1,cnpj2,...:
+         Extrai somente os registros com os mesmos CNPJs (de emitentes ou destinatários) dos contidos na lista de CNPJs informada (separada por vírgula; zeros à esq).
+         
+        -filtrarChaves chave1,chave2,... ou @arquivo:
+         Extrai somente os registros com as mesmas chaves das contidas na lista (utilizar @arquivo.txt para carregar as chaves de um arquivo, com uma chave por linha, sem linhas vazias ou espaços entre as chaves).
+         
+        -realcar:
+         Cria um realce, nos relatórios em PDF, nos registros que corresponderem à -filtrarCnpjs ou -filtrarChaves.
+         
+        -naoGerarLre, -naoGerarLrs e -naoGerarLraicms:
+         Deixam de gerar os respectivos livros quando -gerarRelatorios é utilizada.
+
+    
+Observações:
+    
+    1. Algumas particularidades de formatação/layout do PVA EFD-ICMS-IPI não são emuladas (por exemplo: ordenação, quebra de páginas, número total de páginas), portanto o relatório gerado pode não ser idêntico à última versão do PVA. O que importa mesmo são os dados que devem estar completos e corretos e os somatórios que devem ser iguais
+    2. Oferecido sem qualquer garantia. 
+    3. Estando ainda em versão beta, sem testes suficientes, nunca confie 100% nos resultados. 
+    4. Este software pode ser copiado e distribuído livremente. 
+    
+Bibliotecas utilizadas:
+
+    - IUP: http://webserver2.tecgraf.puc-rio.br/iup/
+    - libxml2: http://www.xmlsoft.org/
+    - PDFium: https://opensource.google/projects/pdfium
+    - libiconv: https://www.gnu.org/software/libiconv/
+    - SQLite3: https://www.sqlite.org/index.html
+    - OpenSSL: https://www.openssl.org/
+
+Ferramentas utilizadas:
+
+    - FreeBASIC: https://www.freebasic.net/
+    - Mingw-64: http://mingw-w64.org/
+
+Acesso ao código-fonte e download da versão mais recente:
+
+    - https://github.com/av1ctor/sefaz-sp-tools/
+
+
+Copyright 2022 by André Vicentini (avtvicentini)
