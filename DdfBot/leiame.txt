@@ -41,7 +41,7 @@ Notas:
 			i: tributo;dci;dij;basico;davb
 			j: tributo;dci;dij;dcm;basico;davb
 		IV: 
-			a: dcm;basico;davb
+			a: tributo;dci;basico;davb -- somente saídas tributadas
 		V: 
 			a: dcm;basico;davb
 			c: dcm;basico;davb
