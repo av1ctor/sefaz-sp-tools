@@ -255,11 +255,9 @@ Public Sub selecionarArquivos()
         .Filters.Add "Arquivos PDF", "*.pdf"
 
         If .Show = True Then
-            limparArquivos
-        
             Dim fPath As Variant
             Dim r As Integer
-            r = 0
+            r = encontrarUltimoArquivo
             For Each fPath In .SelectedItems
                 Cells(4 + r, 10).value = fPath
                 
@@ -303,6 +301,22 @@ Public Sub selecionarArquivos()
     End With
 End Sub
 
+Private Function encontrarUltimoArquivo() As Integer
+    Dim r As Integer
+    r = 0
+    Do While True
+        Dim fname As String
+        fname = Cells(4 + r, 6).value
+        If Len(Trim(fname)) = 0 Then
+            Exit Do
+        End If
+        r = r + 1
+    Loop
+    
+    encontrarUltimoArquivo = r
+
+End Function
+
 Private Function getElementById(doc As Object, id As String) As Object
     On Local Error GoTo handler
     
@@ -326,6 +340,57 @@ End Function
 Public Sub selecionarExpedientes()
     ExpedienteForm.Show
 End Sub
+
+Private Function listarExpedientesPorTipo( _
+    tipo As Integer, _
+    usuarioId As String _
+) As Expediente()
+    Dim expedientes() As Expediente
+    
+    ie.Navigate "https://www.documentos.spsempapel.sp.gov.br/sigaex/app/expediente/doc/listar?ultMovIdEstadoDoc=" & tipo & "&ultMovRespSel.id=" & usuarioId
+    pauseUntilIeReady ie
+    
+    Dim i As Integer
+    i = 0
+    
+    Dim elm As Object
+    For Each elm In ie.Document.getElementsByTagName("a")
+        Dim href As String
+        If InStr(1, elm.href, "/sigaex/app/expediente/doc/exibir?sigla=") > 0 Then
+            Dim sigla As String
+            sigla = Trim(elm.innerText)
+            Dim dup As Boolean
+            dup = False
+            Dim j As Integer
+            For j = 0 To i - 1
+                If expedientes(j).sigla = sigla Then
+                    dup = True
+                    Exit For
+                End If
+            Next
+            If Not dup Then
+                ReDim Preserve expedientes(0 To i)
+                
+                Dim desc As String
+                
+                Dim text As String
+                text = elm.ParentNode.ParentNode.innerText
+                Dim s As Integer
+                s = InStr(1, text, "Complemento do Assunto: ")
+                If s > 0 Then
+                    desc = Trim(Mid(text, s + 24))
+                End If
+                
+                Set expedientes(i) = New Expediente
+                expedientes(i).sigla = sigla
+                expedientes(i).descricao = desc
+                
+                i = i + 1
+            End If
+        End If
+    Next
+    listarExpedientesPorTipo = expedientes
+End Function
 
 Public Function listarExpedientes() As Expediente()
     Dim expedientes() As Expediente
@@ -358,47 +423,29 @@ Public Function listarExpedientes() As Expediente()
     Dim usuarioId As String
     usuarioId = Mid(body, s + 17, e - (s + 17))
 
-    ie.Navigate "https://www.documentos.spsempapel.sp.gov.br/sigaex/app/expediente/doc/listar?ultMovIdEstadoDoc=2&ultMovRespSel.id=" & usuarioId
-    pauseUntilIeReady ie
+    '' 1. aguardando andamento
+    Dim expedientes1() As Expediente
+    expedientes1 = listarExpedientesPorTipo(2, usuarioId)
     
+    '' 2. assinado
+    'Dim expedientes2() As Expediente
+    'expedientes2 = listarExpedientesPorTipo(75, usuarioId)
+    
+    ReDim expedientes(0 To UBound(expedientes1))
+    Dim j As Integer
     Dim i As Integer
-    i = 0
-    
-    Dim elm As Object
-    For Each elm In ie.Document.getElementsByTagName("a")
-        Dim href As String
-        If InStr(1, elm.href, "/sigaex/app/expediente/doc/exibir?sigla=") > 0 Then
-            Dim sigla As String
-            sigla = Trim(elm.innerText)
-            Dim dup As Boolean
-            dup = False
-            Dim j As Integer
-            For j = 0 To i - 1
-                If expedientes(j).sigla = sigla Then
-                    dup = True
-                    Exit For
-                End If
-            Next
-            If Not dup Then
-                ReDim Preserve expedientes(0 To i)
-                
-                Dim desc As String
-                
-                Dim text As String
-                text = elm.ParentNode.ParentNode.innerText
-                s = InStr(1, text, "Complemento do Assunto: ")
-                If s > 0 Then
-                    desc = Trim(Mid(text, s + 24))
-                End If
-                
-                Set expedientes(i) = New Expediente
-                expedientes(i).sigla = sigla
-                expedientes(i).descricao = desc
-                
-                i = i + 1
-            End If
-        End If
-    Next
+    If UBound(expedientes1) > -1 Then
+        For i = 0 To UBound(expedientes1)
+            Set expedientes(j) = expedientes1(i)
+            j = j + 1
+        Next
+    End If
+    'If UBound(expedientes2) > -1 Then
+    '    For i = 0 To UBound(expedientes2)
+    '        Set expedientes(j) = expedientes2(i)
+    '        j = j + 1
+    '    Next
+    'End If
     
     listarExpedientes = expedientes
     
