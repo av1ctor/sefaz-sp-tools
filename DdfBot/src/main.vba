@@ -224,6 +224,15 @@ Private Sub controlClick( _
     controlSend hWnd, "{ENTER}"
 End Sub
 
+Private Sub listClickFirstRow( _
+    ByVal hWnd As LongPtr, _
+    class As String, _
+    ByVal instance As Integer _
+)
+    controlFocus hWnd, class, instance
+    controlSend hWnd, "{HOME}"
+End Sub
+
 Private Sub focusAndSend( _
     ByVal hWnd As LongPtr, _
     class As String, _
@@ -328,6 +337,10 @@ Private Sub preencherDfg(ByVal hWnd As LongPtr, valor As String)
     focusAndSend hWnd, "MSMaskWndClass", 5, formatarData(valor)
 End Sub
 
+Private Sub preencherAliq(ByVal hWnd As LongPtr, valor As String)
+    focusAndSend hWnd, "MSMaskWndClass", 17, valor
+End Sub
+
 Private Sub preencherDDF( _
     ByVal hWnd As LongPtr, _
     inciso As String, _
@@ -356,6 +369,8 @@ Private Sub preencherDDF( _
             preencherDavb hWnd, valor
         Case "dfg"
             preencherDfg hWnd, valor
+        Case "aliq"
+            preencherAliq hWnd, valor
         End Select
     Next
 End Sub
@@ -377,6 +392,7 @@ Private Sub enviarLinha( _
     ByVal hWnd As LongPtr, _
     inciso As String, _
     alinea As String, _
+    acao As String, _
     colunas() As String, _
     linha() As String _
 )
@@ -386,8 +402,13 @@ Private Sub enviarLinha( _
     Case Else
         preencherDDF hWnd, inciso, colunas, linha
     End Select
-    ' incluir
-    controlClick hWnd, "ThunderRT6CommandButton", 11
+    
+    Select Case acao
+    Case "incluir"
+        controlClick hWnd, "ThunderRT6CommandButton", 11
+    Case "alterar"
+        controlClick hWnd, "ThunderRT6CommandButton", 12
+    End Select
 End Sub
 
 Public Sub enviarValores()
@@ -397,17 +418,21 @@ Public Sub enviarValores()
         Exit Sub
     End If
     
-    Dim hWnd As LongPtr
-    hWnd = windowFind(hWndMain, "ThunderRT6FormDC", "Auto de Infração - Alterar")
-    If hWnd = 0 Then
-        MsgBox "Janela ""Auto de Infração - Alterar"" não encontrada"
-        Exit Sub
-    End If
-    
     Dim inciso As String
     inciso = ActiveSheet.Cells(4, 3).value
     Dim alinea As String
     alinea = ActiveSheet.Cells(5, 3).value
+    Dim acao As String
+    acao = LCase(ActiveSheet.Cells(6, 3).value)
+    Dim tipo As String
+    tipo = LCase(ActiveSheet.Cells(7, 3).value)
+    
+    Dim hWnd As LongPtr
+    hWnd = windowFind(hWndMain, "ThunderRT6FormDC", IIf(tipo = "novo", "Auto de Infração - Alterar", "Auto de Infração - Retificar/Ratificar"))
+    If hWnd = 0 Then
+        MsgBox "Janela ""Auto de Infração - ..."" não encontrada"
+        Exit Sub
+    End If
     
     Dim colunas() As String
     colunas = carregarColunas(inciso, alinea)
@@ -430,7 +455,12 @@ Public Sub enviarValores()
             linha(c) = Trim(Cells(4 + r, 6 + c).value)
         Next
         
-        enviarLinha hWnd, inciso, alinea, colunas(), linha()
+        If acao = "alterar" Then
+            listClickFirstRow hWnd, "ListBox", 3
+            Sleep 1000
+        End If
+        
+        enviarLinha hWnd, inciso, alinea, acao, colunas(), linha()
         
         Sleep 1000
     Next
