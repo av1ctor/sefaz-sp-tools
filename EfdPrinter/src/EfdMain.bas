@@ -1,5 +1,5 @@
 '' Impressora de EFD
-'' Copyright 2022 André Vicentini (avtvicentini)
+'' Copyright 2022-2025 André Vicentini (avtvicentini)
 '' Licenciado sob GNU GPL-2.0-ou-posterior
 
 #include once "EfdExt.bi"
@@ -12,8 +12,8 @@ on error goto exceptionReport
 
 '''''''''''   
 sub mostrarCopyright()
-	print wstr("Impressoar de EFD, versão 1.0 beta")
-	print wstr("Copyright 2022 by André Vicentini (avtvicentini)")
+	print wstr("Impressoar de EFD, versão 1.0.1 beta")
+	print wstr("Copyright 2022-2025 by André Vicentini (avtvicentini)")
 	print
 end sub
 

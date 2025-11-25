@@ -9,7 +9,7 @@ dim shared curFile as TFile ptr
 dim shared statusBar as Ihandle ptr
 
 private function item_about_action_cb(item as Ihandle ptr) as long
-	IupMessage("Sobre", !"Impressora de EFD\nVersão 1.0.0 beta\nCopyright 2022 by André Vicentini (avtvicentini)")
+	IupMessage("Sobre", !"Impressora de EFD\nVersão 1.0.1 beta\nCopyright 2022-2025 by André Vicentini (avtvicentini)")
 	return IUP_DEFAULT
 end function
 

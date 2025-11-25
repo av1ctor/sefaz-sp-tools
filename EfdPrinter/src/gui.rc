@@ -11,11 +11,11 @@ BEGIN
             VALUE "Comments", "EfdPrinter\0"
             VALUE "CompanyName", "André Vicentini (avtvicentini)\0"
             VALUE "FileDescription", "Impressora de EFD\0"
-            VALUE "FileVersion", "1.0.0\0"
-            VALUE "LegalCopyright", "Copyright © 2022 André Vicentini (avtvicentini).\0"
+            VALUE "FileVersion", "1.0.1\0"
+            VALUE "LegalCopyright", "Copyright © 2022-2025 André Vicentini (avtvicentini).\0"
             VALUE "OriginalFilename", "EfdPrinter.exe\0"
             VALUE "ProductName", "EfdPrinter\0"
-            VALUE "ProductVersion", "1.0.0\0"
+            VALUE "ProductVersion", "1.0.1\0"
         END
     END
 END

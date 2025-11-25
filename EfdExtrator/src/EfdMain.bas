@@ -1,5 +1,5 @@
 '' Extrator de EFD/Sintegra para Excel/Csv/SQLite/Access/Pdf
-'' Copyright 2017-2021 André Vicentini (avtvicentini)
+'' Copyright 2017-2025 André Vicentini (avtvicentini)
 '' Licenciado sob GNU GPL-2.0-ou-posterior
 
 #include once "EfdExt.bi"
@@ -16,8 +16,8 @@ on error goto exceptionReport
 
 '''''''''''   
 sub mostrarCopyright()
-	print wstr("Extrator de EFD/Sintegra para Excel/Csv/SQLite/Access/Pdf, versão 0.9.7 beta")
-	print wstr("Copyright 2017-2022 by André Vicentini (avtvicentini)")
+	print wstr("Extrator de EFD/Sintegra para Excel/Csv/SQLite/Access/Pdf, versão 0.9.8 beta")
+	print wstr("Copyright 2017-2025 by André Vicentini (avtvicentini)")
 	print
 end sub
 

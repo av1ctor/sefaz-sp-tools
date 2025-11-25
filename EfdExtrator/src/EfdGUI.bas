@@ -9,7 +9,7 @@ dim shared curFile as TFile ptr
 dim shared statusBar as Ihandle ptr
 
 private function item_about_action_cb(item as Ihandle ptr) as long
-	IupMessage("Sobre", !"Extrator de EFD/Sintegra para Excel/Csv/SQLite/Access/Pdf\nVersão 0.9.7 beta\nCopyright 2017-2022 by André Vicentini (avtvicentini)")
+	IupMessage("Sobre", !"Extrator de EFD/Sintegra para Excel/Csv/SQLite/Access/Pdf\nVersão 0.9.8 beta\nCopyright 2017-2025 by André Vicentini (avtvicentini)")
 	return IUP_DEFAULT
 end function
 

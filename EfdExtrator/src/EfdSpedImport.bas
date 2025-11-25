@@ -1226,6 +1226,16 @@ function EfdSpedImport.lerRegDocNFElet(bf as bfile) as TDocNF ptr
 		bf.varchar		'pular cod_mun_dest
 		bf.varchar		'pular cod_cta
 	end if
+	if regMestre->versaoLayout >= 017 then
+		bf.varchar		'pular COD_MOD_DOC_REF
+		bf.varchar		'pular HASH_DOC_REF
+		bf.varchar		'pular SER_DOC_REF
+		bf.varchar		'pular NUM_DOC_REF
+		bf.varchar		'pular MES_DOC_REF
+		bf.varchar		'pular ENER_INJET
+		bf.varchar		'pular OUTRAS_DED
+	end if
+	
 	reg->nroItens		= 0
 
 	reg->itemAnalListHead = null
