@@ -1,6 +1,7 @@
 ﻿// BOLeecher - Copyright 2022 by André Vicentini (avtvicentini)
 
 using System.Net;
+using AsyncKeyedLock;
 using Newtonsoft.Json;
 
 namespace BOLeecher
@@ -17,7 +18,8 @@ namespace BOLeecher
     internal delegate void OnProgressCb(string msg);
     internal delegate void OnProcessFinished();
 
-    internal struct Callbacks { 
+    internal struct Callbacks
+    {
         internal OnErrorCb onError;
         internal OnProgressCb onProgress;
         internal OnPartitionInitialized onPartitionInitialized;
@@ -26,18 +28,21 @@ namespace BOLeecher
         internal OnPartitionError onPartitionError;
     }
 
-    internal struct ArgValue {
+    internal struct ArgValue
+    {
         public string caption;
         public string key;
     }
 
-    internal struct ArgDataProvider {
+    internal struct ArgDataProvider
+    {
         public string name;
         public string id;
         public string memberSelectionMode;
     }
 
-    internal struct Arg {
+    internal struct Arg
+    {
         public string id;
         public int index;
         public string key;
@@ -47,7 +52,8 @@ namespace BOLeecher
         public ArgDataProvider[] dataproviderInfo;
     }
 
-    internal class Leecher {
+    internal class Leecher
+    {
         public const int maxConexoes = 10;
         public const string baseUrl = "https://srvbo-v42.intra.fazenda.sp.gov.br/BOE";
         public const string portalPath = "/portal/2205141328";
@@ -74,15 +80,17 @@ namespace BOLeecher
         private CancellationTokenSource cancTokenSource = new CancellationTokenSource();
 
         private object relatoriosCtxSemLock = new object();
-        private Dictionary<string, SemaphoreSlim> relatoriosCtxSem = new Dictionary<string, SemaphoreSlim>();
+        private AsyncKeyedLocker<string> relatoriosCtxSem = new();
         private Dictionary<string, RelatorioCtx> relatoriosCtx = new Dictionary<string, RelatorioCtx>();
 
-        public static Relatorio[] carregarDefinicaoDeRelatorios() {
+        public static Relatorio[] carregarDefinicaoDeRelatorios()
+        {
             var relatorios = File.ReadAllText(Directory.GetCurrentDirectory() + "/relatorios.json");
             return JsonConvert.DeserializeObject<Relatorio[]>(relatorios);
         }
 
-        public Leecher comRelatorios(List<Relatorio> relatorios) {
+        public Leecher comRelatorios(List<Relatorio> relatorios)
+        {
             this.relatorios = relatorios;
             return this;
         }
@@ -94,17 +102,20 @@ namespace BOLeecher
             return this;
         }
 
-        public Leecher comPasta(string valor) {
+        public Leecher comPasta(string valor)
+        {
             pasta = valor;
             return this;
         }
 
-        public Leecher comSobrescrever(bool valor) {
+        public Leecher comSobrescrever(bool valor)
+        {
             sobrescrever = valor;
             return this;
         }
 
-        public Leecher comUsuario(string username, string password) {
+        public Leecher comUsuario(string username, string password)
+        {
             this.username = username;
             this.password = password;
             return this;
@@ -128,14 +139,16 @@ namespace BOLeecher
             return this;
         }
 
-        private void onPartitionFinished(int num) { 
+        private void onPartitionFinished(int num)
+        {
             mut.WaitOne();
             --processando;
             mut.ReleaseMutex();
             cbs.onPartitionFinished(num);
         }
 
-        private void onPartitionError(int num, string msg) { 
+        private void onPartitionError(int num, string msg)
+        {
             mut.WaitOne();
             --processando;
             mut.ReleaseMutex();
@@ -144,92 +157,93 @@ namespace BOLeecher
 
         private async Task<RelatorioCtx?> onLogon(
             Relatorio relatorio
-        ) {
+        )
+        {
             // NOTA: É necessário fazer logon para cada relatório diverso ou o LaunchPad começará
             // a retornar os arquivos trocados. Isso não acontece quando são partições do mesmo relatório.
-            
-            lock(relatoriosCtxSemLock) { 
-                if(!relatoriosCtxSem.ContainsKey(relatorio.nome)) {
-                    relatoriosCtxSem.Add(relatorio.nome, new SemaphoreSlim(1));
+
+            using var _ = await relatoriosCtxSem.LockAsync(relatorio.nome);
+
+            if (relatoriosCtx.TryGetValue(relatorio.nome, out var relatorioCtx))
+            {
+                return relatorioCtx;
+            }
+
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = new CookieContainer(),
+                UseCookies = true,
+                UseDefaultCredentials = true
+            };
+
+            var client = new HttpClient(handler);
+
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+            client.Timeout = TimeSpan.FromMinutes(60);
+
+            {
+                cbs.onProgress($"Logando {relatorio.nome}...");
+                var res = await client.GetAsync($"{baseUrl}/BI");
+                if (!res.IsSuccessStatusCode)
+                {
+                    cbs.onError("Não foi possível se acessar o LaunchPad!");
+                    return null;
                 }
             }
 
-            try { 
-                relatoriosCtxSem[relatorio.nome].Wait();
-
-                if(relatoriosCtx.ContainsKey(relatorio.nome)) { 
-                    return relatoriosCtx[relatorio.nome];
-                }
-            
-                var handler = new HttpClientHandler {
-                    CookieContainer = new CookieContainer(),
-                    UseCookies = true,
-                    UseDefaultCredentials = true
-                };
-
-                var client = new HttpClient(handler);
-
-                client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
-                client.Timeout = TimeSpan.FromMinutes(60);
-
+            {
+                cbs.onProgress($"Logando {relatorio.nome}....");
+                var res = await portalPost(client, "/InfoView/logon.faces", new KeyValuePair<string, string>[] { });
+                if (!res.IsSuccessStatusCode)
                 {
-                    cbs.onProgress($"Logando {relatorio.nome}...");
-                    var res = await client.GetAsync($"{baseUrl}/BI");
-                    if (!res.IsSuccessStatusCode) {
-                        cbs.onError("Não foi possível se acessar o LaunchPad!");
-                        return null;
-                    }
+                    cbs.onError("'logon.faces' falhou!");
+                    return null;
                 }
+            }
 
-                {
-                    cbs.onProgress($"Logando {relatorio.nome}....");
-                    var res = await portalPost(client, "/InfoView/logon.faces", new KeyValuePair<string, string>[] { });
-                    if (!res.IsSuccessStatusCode) {
-                        cbs.onError("'logon.faces' falhou!");
-                        return null;
-                    }
-                }
-
-                {
-                    cbs.onProgress($"Logando {relatorio.nome}.....");
-                    var form = new[] {
+            {
+                cbs.onProgress($"Logando {relatorio.nome}.....");
+                var form = new[] {
                         new KeyValuePair<string, string>("allowLogoff", "true"),
                         new KeyValuePair<string, string>("appKind", "InfoView"),
                         new KeyValuePair<string, string>("vint_cms", "SRV11375:6400"),
                     };
-                    var res = await portalPost(
-                        client, 
-                        "/BIPCoreWeb/VintelaServlet?vint_backURL=%2FInfoView%2Flogon.faces&allowLogoff=true&appKind=InfoView&vint_cms=SRV11375:6400",
-                        form
-                    );
-                    if (!res.IsSuccessStatusCode) {
-                        cbs.onError("'VintelaServlet' falhou!");
-                        return null;
-                    }
-                }
-
-                string ids = "";
+                var res = await portalPost(
+                    client,
+                    "/BIPCoreWeb/VintelaServlet?vint_backURL=%2FInfoView%2Flogon.faces&allowLogoff=true&appKind=InfoView&vint_cms=SRV11375:6400",
+                    form
+                );
+                if (!res.IsSuccessStatusCode)
                 {
-                    cbs.onProgress($"Logando {relatorio.nome}......");
-                    var res = await portalGet(client, "/InfoView/logon.faces?vint_success=false");
-                    if (!res.IsSuccessStatusCode) {
-                        cbs.onError("'logon.faces' falhou!");
-                        return null;
-                    }
-
-                    doc.Load(await res.Content.ReadAsStreamAsync());
-                    ids = doc.GetElementbyId("com.sun.faces.VIEW").Attributes["value"].Value;
+                    cbs.onError("'VintelaServlet' falhou!");
+                    return null;
                 }
+            }
 
-                if (ids.Length == 0) {
-                    cbs.onError("Ids não encontrados!");
+            string ids = "";
+            {
+                cbs.onProgress($"Logando {relatorio.nome}......");
+                var res = await portalGet(client, "/InfoView/logon.faces?vint_success=false");
+                if (!res.IsSuccessStatusCode)
+                {
+                    cbs.onError("'logon.faces' falhou!");
                     return null;
                 }
 
-                string bttoken = "";
-                {
-                    cbs.onProgress($"Logando {relatorio.nome}.......");
-                    var form = new[] {
+                doc.Load(await res.Content.ReadAsStreamAsync());
+                ids = doc.GetElementbyId("com.sun.faces.VIEW").Attributes["value"].Value;
+            }
+
+            if (ids.Length == 0)
+            {
+                cbs.onError("Ids não encontrados!");
+                return null;
+            }
+
+            string bttoken = "";
+            {
+                cbs.onProgress($"Logando {relatorio.nome}.......");
+                var form = new[] {
                         new KeyValuePair<string, string>("_id0:logon:CMS", "SRV11375:6400"),
                         new KeyValuePair<string, string>("_id0:logon:SAP_SYSTEM", ""),
                         new KeyValuePair<string, string>("_id0:logon:SAP_CLIENT", ""),
@@ -240,77 +254,83 @@ namespace BOLeecher
                         new KeyValuePair<string, string>("com.sun.faces.VIEW", ids ?? ""),
                         new KeyValuePair<string, string>("_id0", "_id0")
                     };
-                    var res = await portalPost(
-                        client, 
-                        "/InfoView/logon.faces",
-                        form
-                    );
-                    if (!res.IsSuccessStatusCode) {
-                        cbs.onError("'logon.faces' falhou!");
-                        return null;
-                    }
-
-                    var page = await res.Content.ReadAsStringAsync();
-                    if (page.IndexOf("Invalid&#x20;username&#x20;or&#x20;password") > -1) {
-                        cbs.onError("Usuário ou senha inválido");
-                        return null;
-                    }
-
-                    doc.LoadHtml(page);
-                    var bttokenNode = doc.DocumentNode.SelectSingleNode("//*[@name='bttoken']");
-                    if(bttokenNode != null) { 
-                        bttoken = bttokenNode.Attributes["value"].Value;
-                    }
-                }
-
-                if (bttoken.Length == 0) {
-                    cbs.onError("bttoken não encontrado!");
+                var res = await portalPost(
+                    client,
+                    "/InfoView/logon.faces",
+                    form
+                );
+                if (!res.IsSuccessStatusCode)
+                {
+                    cbs.onError("'logon.faces' falhou!");
                     return null;
                 }
 
+                var page = await res.Content.ReadAsStringAsync();
+                if (page.IndexOf("Invalid&#x20;username&#x20;or&#x20;password") > -1)
                 {
-                    cbs.onProgress($"Logando {relatorio.nome}........");
-                    var form = new[] {
+                    cbs.onError("Usuário ou senha inválido");
+                    return null;
+                }
+
+                doc.LoadHtml(page);
+                var bttokenNode = doc.DocumentNode.SelectSingleNode("//*[@name='bttoken']");
+                if (bttokenNode != null)
+                {
+                    bttoken = bttokenNode.Attributes["value"].Value;
+                }
+            }
+
+            if (bttoken.Length == 0)
+            {
+                cbs.onError("bttoken não encontrado!");
+                return null;
+            }
+
+            {
+                cbs.onProgress($"Logando {relatorio.nome}........");
+                var form = new[] {
                         new KeyValuePair<string, string>("bttoken", bttoken),
                         new KeyValuePair<string, string>("vint_success", "false"),
                         new KeyValuePair<string, string>("loggedOff", "false")
                     };
-                    var res = await portalPost(
-                        client, 
-                        "/InfoView/listing/main.do?service=%2Fcommon%2FappService.do&appKind=InfoView",
-                        form
-                    );
-                    if (!res.IsSuccessStatusCode) {
-                        cbs.onError("'main.do' falhou!");
-                        return null;
-                    }
+                var res = await portalPost(
+                    client,
+                    "/InfoView/listing/main.do?service=%2Fcommon%2FappService.do&appKind=InfoView",
+                    form
+                );
+                if (!res.IsSuccessStatusCode)
+                {
+                    cbs.onError("'main.do' falhou!");
+                    return null;
                 }
-
-                cbs.onProgress("Gerando relatórios...");
-                
-                var ctx = new RelatorioCtx() { 
-                    client = client,
-                    bttoken = bttoken,
-                };
-
-                relatoriosCtx.Add(relatorio.nome, ctx);
-                
-                return ctx;
-            }
-            finally {
-                relatoriosCtxSem[relatorio.nome].Release();
             }
 
+            cbs.onProgress("Gerando relatórios...");
+
+            var ctx = new RelatorioCtx()
+            {
+                client = client,
+                bttoken = bttoken,
+            };
+
+            relatoriosCtx.Add(relatorio.nome, ctx);
+
+            return ctx;
         }
 
         public async void processar(
             OnProcessFinished onProcessFinished
-        ) {
-            try {
+        )
+        {
+            try
+            {
                 var num = 0;
-                foreach(var relatorio in relatorios) {
-                    foreach(var part in getParticoes(relatorio)) {
-                        particoes.Add(new Particao {
+                foreach (var relatorio in relatorios)
+                {
+                    foreach (var part in getParticoes(relatorio))
+                    {
+                        particoes.Add(new Particao
+                        {
                             num = num++,
                             relatorio = atribuirPeriodo(relatorio, part),
                             formato = formato,
@@ -319,7 +339,8 @@ namespace BOLeecher
                             estado = Estado.INICIANDO,
                             inicio = part.inicio,
                             fim = part.fim,
-                            cbs = new PartitionCallbacks { 
+                            cbs = new PartitionCallbacks
+                            {
                                 onPartitionProgress = cbs.onPartitionProgress,
                                 onPartitionFinished = onPartitionFinished,
                                 onPartitionError = onPartitionError,
@@ -328,13 +349,15 @@ namespace BOLeecher
                     }
                 }
 
-                foreach(var (particao, index) in particoes.Select((value, index) => (value, index))) {
+                foreach (var (particao, index) in particoes.Select((value, index) => (value, index)))
+                {
                     cbs.onPartitionInitialized(index, particao.getNomeArquivo());
                 }
 
                 await gerar(particoes, onProcessFinished);
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
                 cbs.onError(e.Message);
                 onProcessFinished();
             }
@@ -342,40 +365,48 @@ namespace BOLeecher
 
         public async void reprocessar(
             OnProcessFinished onProcessFinished
-        ) {
-            try {
+        )
+        {
+            try
+            {
                 cancTokenSource.Cancel();
 
                 var naoProcessadas = particoes
                     .FindAll(
                         p => p.estado != Estado.FINALIZADA && p.estado != Estado.IGNORADA
                     ).Select(
-                        p => {
-                            p.estado = Estado.INICIANDO; 
+                        p =>
+                        {
+                            p.estado = Estado.INICIANDO;
                             return p;
                         }
                     ).ToList();
-                
+
                 await gerar(naoProcessadas, onProcessFinished);
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
                 cbs.onError(e.Message);
                 onProcessFinished();
-            } 
+            }
         }
 
         private async Task gerar(
             List<Particao> particoes,
             OnProcessFinished onProcessFinished
-        ) { 
+        )
+        {
             var sem = new Semaphore(conexoes, conexoes);
             processando = particoes.Count;
 
             cancTokenSource = new CancellationTokenSource();
-                
-            _ = Task.Factory.StartNew(() => {
-                foreach(var particao in particoes) {
-                    if(!cancTokenSource.Token.IsCancellationRequested) { 
+
+            _ = Task.Factory.StartNew(() =>
+            {
+                foreach (var particao in particoes)
+                {
+                    if (!cancTokenSource.Token.IsCancellationRequested)
+                    {
                         _ = particao.processar(sem, onLogon);
                     }
                 }
@@ -383,7 +414,8 @@ namespace BOLeecher
 
             _ = Task.Factory.StartNew(async () =>
             {
-                while (processando > 0 && !cancTokenSource.Token.IsCancellationRequested) {
+                while (processando > 0 && !cancTokenSource.Token.IsCancellationRequested)
+                {
                     Thread.Sleep(100);
                 }
 
@@ -392,11 +424,12 @@ namespace BOLeecher
                 cbs.onProgress(cancTokenSource.Token.IsCancellationRequested ? "Cancelado!" : "Finalizado!");
                 onProcessFinished();
             }, cancTokenSource.Token);
-        } 
+        }
 
         private async Task processarFalhadas(
             List<Particao> particoes
-        ) {
+        )
+        {
             while (!cancTokenSource.Token.IsCancellationRequested)
             {
                 var falhadas = particoes.FindAll(p => p.estado == Estado.FALHOU && p.tentativas < tentativas);
@@ -420,12 +453,15 @@ namespace BOLeecher
         private string converterValor(
             object valor,
             RelatorioParametro param
-        ) {
-            if(valor == null) {
+        )
+        {
+            if (valor == null)
+            {
                 return "";
             }
-            
-            switch(param.tipo) {
+
+            switch (param.tipo)
+            {
                 case ParametroTipo.Data:
                     return ((DateOnly)valor).ToString(param.formato ?? "dd/MM/yyyy");
                 default:
@@ -436,12 +472,15 @@ namespace BOLeecher
         private RelatorioParametro alterarPeriodo(
             RelatorioParametro param,
             Part part
-        ) {
+        )
+        {
             var valor = param.valor;
-            if(param.nome.Equals("Data Inicial")) { 
+            if (param.nome.Equals("Data Inicial"))
+            {
                 valor = part.inicio;
             }
-            else if (param.nome.Equals("Data Final")) {
+            else if (param.nome.Equals("Data Final"))
+            {
                 valor = part.fim;
             }
 
@@ -450,17 +489,20 @@ namespace BOLeecher
                 key = param.key,
                 valor = converterValor(valor, param),
             };
-        }   
+        }
 
-        private Relatorio atribuirPeriodo (
-            Relatorio relatorio, 
+        private Relatorio atribuirPeriodo(
+            Relatorio relatorio,
             Part part
-        ) {
-            if(!relatorio.particionavel || relatorio.quebra == Particionamento.Nenhum) {
+        )
+        {
+            if (!relatorio.particionavel || relatorio.quebra == Particionamento.Nenhum)
+            {
                 return relatorio;
             }
 
-            return new Relatorio {
+            return new Relatorio
+            {
                 id = relatorio.id,
                 nome = relatorio.nome,
                 particionavel = relatorio.particionavel,
@@ -472,7 +514,8 @@ namespace BOLeecher
         private async Task<HttpResponseMessage> portalGet(
             HttpClient client,
             string path
-        ) {
+        )
+        {
             return await client.GetAsync($"{baseUrl}{portalPath}{path}");
         }
 
@@ -480,7 +523,8 @@ namespace BOLeecher
             HttpClient client,
             string path,
             KeyValuePair<string, string>[] fields
-        ) {
+        )
+        {
             var form = new FormUrlEncodedContent(fields);
             return await client.PostAsync($"{baseUrl}{portalPath}{path}", form);
         }
@@ -492,9 +536,11 @@ namespace BOLeecher
         }
         private List<Part> getParticoes(
             Relatorio relatorio
-        ) {
+        )
+        {
             var parts = new List<Part>();
-            if(!relatorio.particionavel || relatorio.quebra == Particionamento.Nenhum) {
+            if (!relatorio.particionavel || relatorio.quebra == Particionamento.Nenhum)
+            {
                 parts.Add(new Part { });
                 return parts;
             }
@@ -503,14 +549,17 @@ namespace BOLeecher
             var fim = (DateOnly)(relatorio.parametros.Find(r => r.nome == "Data Final").valor);
             var data = inicio;
 
-            switch (relatorio.quebra) {
+            switch (relatorio.quebra)
+            {
                 case Particionamento.Anual:
                     var primeiroDiaDoAno = new DateOnly(inicio.Year, 1, 1);
-                    while (data <= fim) {
+                    while (data <= fim)
+                    {
                         var ultimoDia = primeiroDiaDoAno.AddYears(1).AddDays(-1);
-                        parts.Add(new Part {
+                        parts.Add(new Part
+                        {
                             inicio = data,
-                            fim = ultimoDia <= fim? ultimoDia: fim,
+                            fim = ultimoDia <= fim ? ultimoDia : fim,
                         });
                         primeiroDiaDoAno = primeiroDiaDoAno.AddYears(1);
                         data = primeiroDiaDoAno;
@@ -565,7 +614,7 @@ namespace BOLeecher
                 case Particionamento.Quinzenal:
                     while (data <= fim)
                     {
-                        var ultimoDia = data.AddDays(15-1);
+                        var ultimoDia = data.AddDays(15 - 1);
                         parts.Add(new Part
                         {
                             inicio = data,
@@ -601,7 +650,8 @@ namespace BOLeecher
                     break;
 
                 default:
-                    parts.Add(new Part {
+                    parts.Add(new Part
+                    {
                         inicio = inicio,
                         fim = fim,
                     });
